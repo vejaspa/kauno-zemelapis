@@ -3,17 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Darželiai, mokyklos, dviračių takai ir kelionės laikas Kaune ir Kauno rajone. Įsikelk skelbimus iš aruodo ir pamatyk, kas aplink.">
 <meta name="theme-color" content="#1e5a7a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Kauno žemėlapis">
+<meta name="apple-mobile-web-app-title" content="Kur gyventi Kaune">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>body{margin:0;padding:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px)}</style>
 </head>
 <body>
-<title>Kauno objektų žemėlapis</title>
+<title>Kur gyventi Kaune</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -72,9 +73,10 @@ body { background: var(--bg); color: var(--fg); font-family: var(--ff-ui); font-
 .cnt { color: var(--muted); font: 500 11.5px var(--ff-num); }
 .solo { flex: none; border: 1px solid var(--line); background: transparent; color: var(--muted); font: 500 11.5px var(--ff-ui); border-radius: 999px; padding: 2px 8px; cursor: pointer; }
 .solo:hover { color: var(--fg); border-color: var(--accent); }
-.steps { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 5px; }
+.steps { margin: 0; padding-left: 18px; font-size: 13px; color: var(--fg); display: flex; flex-direction: column; gap: 8px; }
+#impurl { display: block; margin-top: 5px; font-family: var(--ff-ui); font-size: 13px; }
 .bm { display: inline-block; background: var(--accent); color: var(--accent-ink); font: 600 12.5px var(--ff-ui); padding: 3px 10px; border-radius: 999px; text-decoration: none; cursor: grab; }
-#impsec textarea, #bmcode { width: 100%; font: 500 12px var(--ff-num); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; resize: vertical; }
+#impsec textarea, #bmcode, #impurl { width: 100%; font: 500 12px var(--ff-num); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; resize: vertical; }
 #impsec.drop { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 8px; }
 details.mini { border-top: 0; padding-top: 0; }
 details.mini summary { font-size: 12.5px; color: var(--accent); }
@@ -197,12 +199,25 @@ details a { color: var(--accent); }
 #loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--land); color: var(--muted); font-size: 14px; }
 .attr { position: absolute; right: 8px; bottom: 6px; font-size: 10.5px; color: var(--muted); background: color-mix(in srgb, var(--panel) 80%, transparent); padding: 2px 6px; border-radius: 4px; }
 #exnote { font-size: 12px; color: var(--muted); margin: -4px 0 0; }
+#panelbtn, .panelhide { display: none; }
+/* Phones: the map fills the screen; the panel is a sheet over it that can be hidden. */
 @media (max-width: 820px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: 58vh auto; height: auto; }
-  .mapwrap { order: -1; height: 58vh; }
-  .panel { border-right: 0; border-top: 1px solid var(--line); overflow: visible; padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-  html, body { height: auto; }
+  html, body { height: 100%; overflow: hidden; }
+  .app { display: block; position: relative; height: 100vh; height: 100dvh; }
+  .mapwrap { position: absolute; inset: 0; }
+  .panel { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; max-height: 75vh; max-height: 75dvh; overflow-y: auto; overscroll-behavior: contain;
+    border-right: 0; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; box-shadow: 0 -6px 24px rgb(0 0 0 / .2);
+    padding-top: 0; padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)); transition: transform .25s ease; }
+  body.panel-off .panel { transform: translateY(105%); visibility: hidden; transition: transform .25s ease, visibility 0s .25s; }
+  .panelhide { display: flex; position: sticky; top: 0; z-index: 2; background: var(--panel); justify-content: center; padding: 8px 0 4px; margin: 0 -16px; }
+  .panelhide button { border: 1px solid var(--line); background: var(--chip); color: var(--fg); font: 600 13px var(--ff-ui); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+  #panelbtn { display: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 18px)); z-index: 3; border: 0; background: var(--accent); color: var(--accent-ink); font: 600 14px var(--ff-ui); border-radius: 999px; padding: 11px 18px; box-shadow: 0 3px 12px rgb(0 0 0 / .3); cursor: pointer; white-space: nowrap; }
+  body.panel-off #panelbtn { display: block; }
+  #card { top: 64px; bottom: auto; max-height: calc(100% - 150px); }
+  .pickbar { max-width: calc(100% - 70px); padding: 4px; }
+  .pickbar > span { display: none; }
 }
+@media (prefers-reduced-motion: reduce) { .panel { transition: none !important; } }
 @media (prefers-reduced-motion: reduce) { #congbar { transition: none; } }
 .sw { display: inline-block; width: 18px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 2px; flex: none; }
 .sw.line { height: 3px; border-radius: 2px; }
@@ -214,10 +229,11 @@ details a { color: var(--accent); }
 </style>
 
 <div class="app">
-  <aside class="panel">
+  <aside class="panel" id="panel">
+    <div class="panelhide"><button id="panelhide">Slėpti ir rodyti žemėlapį</button></div>
     <header>
-      <h1>Kauno objektų žemėlapis</h1>
-      <p>Kaunas ir Kauno rajonas: darželiai, mokyklos, dviračių takai, miškai, viešasis transportas ir kelionės laikas automobiliu ar viešuoju transportu.</p>
+      <h1>Kur gyventi Kaune</h1>
+      <p>Darželiai, mokyklos, dviračių takai ir kelionės laikas Kaune ir Kauno rajone. Įsikelk skelbimus iš aruodo ir pamatyk, kas aplink.</p>
     </header>
 
     <section aria-labelledby="h-lay">
@@ -227,23 +243,22 @@ details a { color: var(--accent); }
     </section>
 
     <section aria-labelledby="h-imp" id="impsec">
-      <h2 id="h-imp">Skelbimai iš aruodo ar skelbiu</h2>
-      <p class="tipnote">Nebūtina. Susidėliok paiešką aruodas.lt ar skelbiu.lt pagal savo kriterijus (namai, butai, sklypai) ir perkelk rezultatus čia. Kol nieko neįkėlei, skelbimų žemėlapyje nėra.</p>
+      <h2 id="h-imp">Skelbimai iš aruodo</h2>
       <ol class="steps">
-        <li>Nutempk šį mygtuką į naršyklės žymių juostą: <a class="bm" id="bmlink" href="#">Perkelti skelbimus</a></li>
-        <li>Atsidaryk savo paieškos rezultatus aruodas.lt ar skelbiu.lt ir spausk žymę. Ji surinks visus rezultatų puslapius.</li>
-        <li>Spausk „Kopijuoti“, grįžk čia ir įklijuok į laukelį žemiau (Ctrl+V).</li>
+        <li>Vieną kartą nutempk šį mygtuką į naršyklės žymių juostą: <a class="bm" id="bmlink" href="#">Į žemėlapį</a></li>
+        <li>Įklijuok čia savo paieškos nuorodą iš aruodas.lt ar skelbiu.lt:<input id="impurl" type="url" inputmode="url" placeholder="https://www.aruodas.lt/..." autocomplete="off" aria-label="Paieškos nuoroda"></li>
+        <li>Atsidariusiame aruode spausk žymę „Į žemėlapį“. Skelbimai atsiras čia.</li>
       </ol>
-      <textarea id="imppaste" rows="2" placeholder="Įklijuok čia (Ctrl+V)" aria-label="Įklijuoti skelbimus"></textarea>
-      <div class="row"><button class="btn ghost" id="impfile">Įkelti failą</button><input type="file" id="impinput" multiple accept=".html,.htm,.csv,.json,.txt" hidden><button class="linkbtn" id="impclear" hidden>Pašalinti skelbimus</button></div>
       <p class="tipnote" id="impmsg" aria-live="polite"></p>
+      <div class="row"><button class="linkbtn" id="impclear" hidden>Pašalinti skelbimus</button></div>
       <details class="mini">
-        <summary>Kiti būdai ir jei žymė neveikia</summary>
-        <p>Failu galima įkelti: išsaugotą paieškos rezultatų puslapį (naršyklėje Ctrl+S, „.html“, galima pažymėti kelis puslapius), CSV failą su adreso stulpeliu (Adresas, Vieta ar Address; kaina, plotas ir nuoroda nebūtini) arba žymės atsisiųstą failą. Failą galima ir nutempti ant šio skyriaus.</p>
-        <p>Jei mygtuko nepavyksta nutempti: sukurk naują žymę ir į jos adreso lauką įklijuok šį kodą.</p>
+        <summary>Kitaip (failas, telefonas)</summary>
+        <p>Veikia kompiuterio naršyklėje. Telefone: kompiuteryje žymės lange spausk „Atsisiųsti failą“, o telefone įkelk jį čia.</p>
+        <div class="row"><button class="btn ghost" id="impfile">Įkelti failą</button><input type="file" id="impinput" multiple accept=".html,.htm,.csv,.json,.txt" hidden></div>
+        <p>Tinka žymės failas, išsaugotas paieškos puslapis (.html) arba CSV su adresų stulpeliu.</p>
+        <p>Jei mygtuko nepavyksta nutempti, sukurk žymę ir į jos adresą įklijuok šį kodą:</p>
         <textarea id="bmcode" rows="2" readonly aria-label="Žymės kodas"></textarea>
         <button class="linkbtn" id="bmcopy">Kopijuoti kodą</button>
-        <p>Naujas įkėlimas pakeičia ankstesnius skelbimus. Jie saugomi tik šioje naršyklėje ir niekur nesiunčiami.</p>
       </details>
     </section>
 
@@ -287,7 +302,7 @@ details a { color: var(--accent); }
     </section>
 
     <section aria-labelledby="h-iso">
-      <div class="row" style="justify-content:space-between"><h2 id="h-iso">Laiko zonos žemėlapyje</h2><label class="switch"><input type="checkbox" id="isoon">Rodyti</label></div>
+      <div class="row" style="justify-content:space-between"><h2 id="h-iso">Laiko zonos žemėlapyje</h2><label class="switch"><input type="checkbox" id="isoon" checked>Rodyti</label></div>
       <div id="isobody" style="display:flex;flex-direction:column;gap:10px">
         <div class="row"><span style="font-size:12.5px;color:var(--muted);width:44px">Kuo</span><div class="seg"><button data-imode="car" aria-pressed="true">Automobiliu</button><button data-imode="pt">Viešuoju tr.</button></div></div>
         <div class="row"><span style="font-size:12.5px;color:var(--muted);width:44px">Nuo</span><div class="seg"><button data-iorig="O" aria-pressed="true">Centro taško</button><button data-iorig="A">Taško A</button><button data-iorig="B">Taško B</button></div></div>
@@ -337,6 +352,7 @@ details a { color: var(--accent); }
     <div id="map" role="application" aria-label="Kauno ir Kauno rajono žemėlapis"></div>
     <div class="pickbar"><span>Spustelėjus:</span><div class="seg"><button data-pick="I" aria-pressed="true" title="Parodo laiką iki spustelėto taško">Matuoti</button><button data-pick="O" title="Perkelia centro tašką, nuo kurio skaičiuojamos zonos">Centras</button><button data-pick="A">A</button><button data-pick="B">B</button></div></div>
     <div id="card" hidden aria-live="polite"></div>
+    <button id="panelbtn" aria-controls="panel">Sluoksniai ir meniu</button>
     <div id="busy" hidden>Skaičiuojami laikai…</div>
     <div class="mapui">
       <button id="zin" aria-label="Priartinti">+</button><button id="zout" aria-label="Nutolinti">−</button>
@@ -378,16 +394,25 @@ details a { color: var(--accent); }
   }
   // rings of two nested contour levels, filled even-odd, turned into proper polygons with holes
   function bandPolygons(rings, nx, ny) {
+    // nest rings by containment (most vertices inside), then keep a hole only if it lies fully inside its outer ring
     const R = rings.map((r) => ({ r, a: ringArea(r), bb: bbox(r) })).filter((o) => o.a > 0.05).sort((p, q) => q.a - p.a);
+    const frac = (r, P) => { const step = Math.max(1, Math.floor(r.length / 16)); let n = 0, k = 0; for (let i = 0; i < r.length; i += step) { k++; if (pip(r[i][0], r[i][1], P)) n++; } return n / k; };
     const done = [];
     for (const o of R) {
-      let pt = o.r.find(([x, y]) => x > 0.01 && y > 0.01 && x < nx - 0.01 && y < ny - 0.01) || o.r[0];
-      // nudge the probe point slightly inside along the ring to avoid touching neighbour rings
       let parent = null;
-      for (let k = done.length - 1; k >= 0; k--) { const p = done[k]; if (pt[0] < p.bb[0] || pt[0] > p.bb[2] || pt[1] < p.bb[1] || pt[1] > p.bb[3]) continue; if (pip(pt[0], pt[1], p.r)) { parent = p; break; } }
-      o.depth = parent ? parent.depth + 1 : 0;
-      if (o.depth % 2 === 0) o.poly = [o.r]; else parent.poly.push(o.r);
+      for (let k = done.length - 1; k >= 0; k--) {
+        const p = done[k];
+        if (o.bb[0] < p.bb[0] - 0.5 || o.bb[2] > p.bb[2] + 0.5 || o.bb[1] < p.bb[1] - 0.5 || o.bb[3] > p.bb[3] + 0.5) continue;
+        if (frac(o.r, p.r) > 0.5) { parent = p; break; }
+      }
+      o.depth = parent ? parent.depth + 1 : 0; o.parent = parent;
+      if (o.depth % 2 === 0) o.poly = [o.r];
       done.push(o);
+    }
+    for (const o of done) {
+      if (o.depth % 2 === 0) continue;
+      const outer = o.parent.poly[0];
+      if (o.r.every(([x, y]) => pip(x, y, outer))) o.parent.poly.push(o.r);
     }
     return done.filter((o) => o.depth % 2 === 0).map((o) => o.poly);
   }
@@ -397,7 +422,7 @@ details a { color: var(--accent); }
     const features = [];
     BANDS.forEach((b, i) => {
       const rings = (byB[b] || []).concat(i > 0 ? (byB[BANDS[i - 1]] || []) : []);
-      const polys = bandPolygons(rings.map((r) => simplify(r, 0.12)), nx, ny);
+      const polys = bandPolygons(rings.map((r) => simplify(r, 0.08)), nx, ny);
       if (!polys.length) return;
       features.push({ type: 'Feature', properties: { b: i, min: b }, geometry: { type: 'MultiPolygon', coordinates: polys.map((poly) => poly.map((r) => r.map(([x, y]) => ll(x * gs, y * gs)))) } });
     });
@@ -837,8 +862,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
   const REF = [[465, 'Rytas 07:45'], [720, 'Diena 12:00'], [1035, 'Vakaras 17:15']];
   const S = {
     day: 'wd', t: 465, A: null, B: null, O: null, probe: null, pick: 'I', route: true,
-    iso: { on: false, mode: 'car', origin: 'O' }, isoCar: null, isoPt: null, isoFC: null,
-    lay: { pt: true, bounds: true, forest: true, cycle: true, track: true, edu: true, kg: true, lst: true },
+    iso: { on: true, mode: 'car', origin: 'O' }, isoCar: null, isoPt: null, isoFC: null,
+    lay: { pt: true, bounds: true, forest: true, cycle: true, track: true, edu: true, kg: true, edup: true, kgp: true, lst: true },
     car: null, pt: null, free: null, prof: null, card: null,
   };
   let GRID = null, colors = {}, FAM = 'system-ui', pinned = [];
@@ -934,7 +959,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
   }
   function eduGeo() {
     const pinSet = new Set(pinned.map((p) => p.name));
-    return FC(D.edu.map((e, i) => ({ type: 'Feature', id: i, properties: { i, kind: e[0], name: e[1], pin: pinSet.has(e[1]) ? 1 : 0, img: pinSet.has(e[1]) ? 'ic-pin' : (e[0] === 's' ? 'ic-school' : 'ic-kg') }, geometry: { type: 'Point', coordinates: ll5(e[2], e[3]) } })));
+    return FC(D.edu.map((e, i) => ({ type: 'Feature', id: i, properties: { i, kind: e[0], own: e[4] || 'v', name: e[1], pin: pinSet.has(e[1]) ? 1 : 0, img: pinSet.has(e[1]) ? 'ic-pin' : (e[0] === 's' ? 'ic-school' : 'ic-kg') + (e[4] === 'p' ? '-p' : '') }, geometry: { type: 'Point', coordinates: ll5(e[2], e[3]) } })));
   }
 
   // ---------- style
@@ -954,7 +979,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
       'iso-line': { 'line-color': ['match', ['get', 'b'], 0, c.i5, 1, c.i10, 2, c.i15, 3, c.i20, 4, c.i25, c.i30], 'line-width': 1, 'line-opacity': 0.9 },
       bounds: { 'line-color': c.bound, 'line-width': 1.2, 'line-dasharray': [5, 4] },
       track: { 'line-color': c.track, 'line-width': W(6, .8, 1.6), 'line-dasharray': [2, 2.4] },
-      cycle: { 'line-color': c.cycle, 'line-width': W(9, 1, 2.6) },
+      cycle: { 'line-color': c.cycle, 'line-width': ['interpolate', ['linear'], ['zoom'], 9, 1.2, 12, 1.8, 15, 3] },
       rail: { 'line-color': c.rail, 'line-width': 1.2, 'line-dasharray': [3, 2.5] },
       bus: { 'line-color': c.bus, 'line-width': W(6, 1, 2.5), 'line-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.38, 13, 0.55] },
       trol: { 'line-color': c.trolley, 'line-width': W(6, 1, 2.5), 'line-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.38, 13, 0.55] },
@@ -981,17 +1006,17 @@ if (typeof module !== 'undefined') module.exports = Engine;
     add({ id: 'forest', type: 'fill', source: 'forest', layout: vis(S.lay.forest) });
     add({ id: 'park', type: 'fill', source: 'park', layout: vis(S.lay.forest) });
     add({ id: 'iso-fill', type: 'fill', source: 'iso', layout: vis(S.iso.on) });
+    add({ id: 'iso-line', type: 'line', source: 'iso', layout: vis(S.iso.on) });
     add({ id: 'water', type: 'fill', source: 'water' });
     add({ id: 'rivers', type: 'line', source: 'rivers', layout: { 'line-join': 'round', 'line-cap': 'round' } });
     add({ id: 'bounds', type: 'line', source: 'bounds', layout: vis(S.lay.bounds) });
     add({ id: 'track', type: 'line', source: 'track', minzoom: zOf(0.025), layout: Object.assign(vis(S.lay.track), { 'line-join': 'round' }) });
     for (const [id, c, mz] of ROADS) add({ id: id + 'c', type: 'line', source: 'roads', minzoom: Math.max(mz, zOf(0.045)), filter: ['==', ['get', 'c'], c], layout: { 'line-join': 'round', 'line-cap': 'round' } });
     for (const [id, c, mz] of ROADS) add({ id, type: 'line', source: 'roads', minzoom: mz, filter: ['==', ['get', 'c'], c], layout: { 'line-join': 'round', 'line-cap': 'round' } });
-    add({ id: 'cycle', type: 'line', source: 'cycle', minzoom: zOf(0.008), layout: Object.assign(vis(S.lay.cycle), { 'line-join': 'round', 'line-cap': 'round' }) });
+    add({ id: 'cycle', type: 'line', source: 'cycle', layout: Object.assign(vis(S.lay.cycle), { 'line-join': 'round', 'line-cap': 'round' }) });
     add({ id: 'rail', type: 'line', source: 'rail', minzoom: zOf(0.012) });
     add({ id: 'bus', type: 'line', source: 'ptlines', filter: ['==', ['get', 'tr'], 0], layout: Object.assign(vis(S.lay.pt), { 'line-join': 'round' }) });
     add({ id: 'trol', type: 'line', source: 'ptlines', filter: ['==', ['get', 'tr'], 1], layout: Object.assign(vis(S.lay.pt), { 'line-join': 'round' }) });
-    add({ id: 'iso-line', type: 'line', source: 'iso', layout: vis(S.iso.on) });
     add({ id: 'car-case', type: 'line', source: 'car', layout: { 'line-join': 'round', 'line-cap': 'round' } });
     add({ id: 'car', type: 'line', source: 'car', layout: { 'line-join': 'round', 'line-cap': 'round' } });
     add({ id: 'pt-ride', type: 'line', source: 'ptride', layout: { 'line-join': 'round', 'line-cap': 'round' } });
@@ -1000,10 +1025,16 @@ if (typeof module !== 'undefined') module.exports = Engine;
     add({ id: 'lst', type: 'circle', source: 'lst', layout: vis(S.lay.lst) });
     add({ id: 'lst-sel', type: 'circle', source: 'lstsel', layout: vis(S.lay.lst) });
     const iconLayout = (extra) => Object.assign({ 'icon-image': ['get', 'img'], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, extra || {});
-    const dot = (kind, col, minz, maxz, vis) => add({ id: kind + '-dot', type: 'circle', source: 'edu', minzoom: minz, maxzoom: maxz, filter: ['all', ['==', ['get', 'kind'], kind === 'edu' ? 's' : 'k'], ['==', ['get', 'pin'], 0]], layout: vis, paint: { 'circle-color': colors[col], 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2.4, 12, 3.6], 'circle-stroke-color': colors.halo, 'circle-stroke-width': 1 } });
-    dot('kg', 'kg', 0, 12.6, vis(S.lay.kg)); dot('edu', 'edu', 0, 12.2, vis(S.lay.edu));
-    add({ id: 'kg', type: 'symbol', source: 'edu', minzoom: 12.6, filter: ['all', ['==', ['get', 'kind'], 'k'], ['==', ['get', 'pin'], 0]], layout: iconLayout(vis(S.lay.kg)) });
-    add({ id: 'edu', type: 'symbol', source: 'edu', minzoom: 12.2, filter: ['all', ['==', ['get', 'kind'], 's'], ['==', ['get', 'pin'], 0]], layout: iconLayout(vis(S.lay.edu)) });
+    const eduF = (kind, own) => ['all', ['==', ['get', 'kind'], kind], ['==', ['get', 'own'], own], ['==', ['get', 'pin'], 0]];
+    const dot = (id, kind, own, col, maxz, v) => add({ id: id + '-dot', type: 'circle', source: 'edu', maxzoom: maxz, filter: eduF(kind, own), layout: v, paint: own === 'p'
+      ? { 'circle-color': colors.halo, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2.4, 12, 3.4], 'circle-stroke-color': colors[col], 'circle-stroke-width': 1.8 }
+      : { 'circle-color': colors[col], 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2.4, 12, 3.6], 'circle-stroke-color': colors.halo, 'circle-stroke-width': 1 } });
+    dot('kg', 'k', 'v', 'kg', 12.6, vis(S.lay.kg)); dot('kgp', 'k', 'p', 'kg', 12.6, vis(S.lay.kgp));
+    dot('edu', 's', 'v', 'edu', 12.2, vis(S.lay.edu)); dot('edup', 's', 'p', 'edu', 12.2, vis(S.lay.edup));
+    add({ id: 'kg', type: 'symbol', source: 'edu', minzoom: 12.6, filter: eduF('k', 'v'), layout: iconLayout(vis(S.lay.kg)) });
+    add({ id: 'kgp', type: 'symbol', source: 'edu', minzoom: 12.6, filter: eduF('k', 'p'), layout: iconLayout(vis(S.lay.kgp)) });
+    add({ id: 'edu', type: 'symbol', source: 'edu', minzoom: 12.2, filter: eduF('s', 'v'), layout: iconLayout(vis(S.lay.edu)) });
+    add({ id: 'edup', type: 'symbol', source: 'edu', minzoom: 12.2, filter: eduF('s', 'p'), layout: iconLayout(vis(S.lay.edup)) });
     add({ id: 'pinned', type: 'symbol', source: 'edu', filter: ['==', ['get', 'pin'], 1], layout: iconLayout() });
     const LBL = [['loc', zOf(0.06), 24], ['v3', zOf(0.035), 24], ['v2', zOf(0.02), 24], ['suburb', zOf(0.02), 24], ['v1', zOf(0.012), 24], ['town', zOf(0.006), 24], ['city', 0, zOf(0.06)]];
     for (const [g, minz, maxz] of LBL) add({ id: 'lbl-' + g, type: 'symbol', source: 'places', minzoom: minz, maxzoom: maxz, filter: ['==', ['get', 'g'], g], layout: { 'icon-image': ['get', 'img'], 'icon-padding': 3, 'symbol-sort-key': ['get', 'k'] } });
@@ -1045,6 +1076,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
   const ICONS = {
     'ic-school': () => iconCanvas((c) => { badge(c, colors.edu); cap(c, colors.panel); }),
     'ic-kg': () => iconCanvas((c) => { c.fillStyle = colors.kg; c.strokeStyle = colors.halo; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, 7.5, 0, 7); c.fill(); c.stroke(); c.fillStyle = colors.panel; c.beginPath(); c.arc(0, -1.5, 2.2, 0, 7); c.fill(); c.beginPath(); c.moveTo(-3.6, 4.2); c.quadraticCurveTo(0, -1, 3.6, 4.2); c.closePath(); c.fill(); }),
+    'ic-school-p': () => iconCanvas((c) => { badge(c, colors.panel); c.strokeStyle = colors.edu; c.lineWidth = 2; c.beginPath(); if (c.roundRect) c.roundRect(-8, -8, 16, 16, 4.5); else c.rect(-8, -8, 16, 16); c.stroke(); cap(c, colors.edu); }),
+    'ic-kg-p': () => iconCanvas((c) => { c.fillStyle = colors.panel; c.strokeStyle = colors.kg; c.lineWidth = 2.2; c.beginPath(); c.arc(0, 0, 7.3, 0, 7); c.fill(); c.stroke(); c.fillStyle = colors.kg; c.beginPath(); c.arc(0, -1.5, 2.2, 0, 7); c.fill(); c.beginPath(); c.moveTo(-3.6, 4.2); c.quadraticCurveTo(0, -1, 3.6, 4.2); c.closePath(); c.fill(); }),
     'ic-pin': () => iconCanvas((c) => { c.scale(1.15, 1.15); badge(c, colors.pin); cap(c, colors.panel); }),
   };
   function addIcons() { for (const [id, fn] of Object.entries(ICONS)) { const im = fn(); if (!map.hasImage(id)) map.addImage(id, im.data, { pixelRatio: im.pr }); } }
@@ -1133,6 +1166,14 @@ if (typeof module !== 'undefined') module.exports = Engine;
     return parts.join(', ');
   }
 
+  let pendingImport = null, lastImportAt = '';
+  window.addEventListener('message', (ev) => {
+    const d = ev.data; if (!d || typeof d !== 'object' || typeof d.kkImport !== 'string' || d.kkImport.length > 20e6) return;
+    try { ev.source && ev.source.postMessage({ kkAck: 1 }, '*'); } catch (e) { }
+    let at = ''; try { at = JSON.parse(d.kkImport).at || ''; } catch (e) { return; }
+    if (at && at === lastImportAt) return; lastImportAt = at;
+    if (WK.ready && mainReady) importText(d.kkImport, 'aruodas'); else pendingImport = d.kkImport;
+  });
   // ---------- imported listings (optional: the viewer brings their own search results from aruodas.lt or skelbiu.lt)
   let LST = [], lstMeta = null;
   const num = (v) => { if (v == null) return null; const m = String(v).replace(/[\s ]/g, '').replace(',', '.').match(/\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
@@ -1237,6 +1278,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     if (!fresh) return;
     if (!store.set('kaunas-obj-imp', { meta, list: list.map((l) => { const o = Object.assign({}, l); delete o.cands; return o; }) })) impMsg($('#impmsg').textContent + ' Naršyklė neleido jų išsaugoti, todėl perkrovus puslapį reikės įkelti iš naujo.');
     if (!S.lay.lst) setLay('lst', true);
+    if (isPhone()) document.body.classList.add('panel-off');
     const pts = LST.filter((l) => l.lon != null);
     if (pts.length) { let x0 = 180, y0 = 90, x1 = -180, y1 = -90; for (const l of pts) { x0 = Math.min(x0, l.lon); x1 = Math.max(x1, l.lon); y0 = Math.min(y0, l.lat); y1 = Math.max(y1, l.lat); } map.fitBounds([[x0, y0], [x1, y1]], { padding: 50, duration: 600, maxZoom: 14 }); }
   }
@@ -1263,7 +1305,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
   function restoreListings() { const st = store.get('kaunas-obj-imp', null); if (st && Array.isArray(st.list) && st.list.length) setListings(st.list, st.meta || {}, false); }
   // bookmarklet: runs on the viewer's own aruodas.lt / skelbiu.lt results page, walks the result pages and offers the rows to copy
   function bookmarkletCode() {
-    const run = function (parseDoc) {
+    const run = function (parseDoc, APP) {
       if (window.__kkImp) return; window.__kkImp = 1;
       const box = document.createElement('div');
       box.style.cssText = 'position:fixed;z-index:2147483647;right:16px;top:16px;width:380px;max-width:calc(100vw - 32px);background:#fff;color:#111;border:1px solid #999;border-radius:10px;padding:14px;font:14px system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.25);text-align:left';
@@ -1272,6 +1314,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
       const close = () => { box.remove(); window.__kkImp = 0; };
       const btn = (t, f) => { const x = document.createElement('button'); x.textContent = t; x.style.cssText = 'margin:6px 6px 0 0;padding:6px 10px;border-radius:6px;border:1px solid #888;background:#f3f3f3;color:#111;cursor:pointer;font:600 13px system-ui,sans-serif'; x.onclick = f; return x; };
       const host = location.hostname, isA = /aruodas\.lt$/.test(host), isS = /skelbiu\.lt$/.test(host);
+      let target = null; try { if (window.opener && !window.opener.closed) target = window.opener; } catch (e) { }
+      if (!target && APP && (isA || isS)) target = window.open(APP, 'kur_gyventi_kaune');
       if (!isA && !isS) { msg.textContent = 'Atsidaryk savo paieškos rezultatus aruodas.lt arba skelbiu.lt ir spausk žymę ten.'; box.append(btn('Uždaryti', close)); return; }
       const pageUrl = (p) => {
         const u = new URL(location.href);
@@ -1292,24 +1336,43 @@ if (typeof module !== 'undefined') module.exports = Engine;
           await new Promise((r) => setTimeout(r, 800));
         }
         const data = JSON.stringify({ v: 1, from: location.href, at: new Date().toISOString(), rows });
-        if (!rows.length) { msg.textContent = 'Šiame puslapyje skelbimų nerasta. Atsidaryk paieškos rezultatų sąrašą ir bandyk dar kartą.'; box.append(btn('Uždaryti', close)); return; }
-        msg.textContent = 'Skelbimų surinkta: ' + rows.length + (stop ? ' (' + stop + ')' : '') + '. Spausk „Kopijuoti“, grįžk į žemėlapį ir įklijuok į laukelį.';
+        if (!rows.length) { msg.textContent = 'Šiame puslapyje skelbimų nerasta. Atsidaryk paieškos rezultatų sąrašą ir bandyk dar kartą.'; box.append(btn('Uždaryti', close)); if (target && target !== window.opener) try { target.close(); } catch (e) { } return; }
         const ta = document.createElement('textarea'); ta.value = data; ta.readOnly = true; ta.style.cssText = 'display:block;width:100%;height:56px;font:11px monospace;margin:6px 0;box-sizing:border-box';
         const cp = btn('Kopijuoti', async () => { try { await navigator.clipboard.writeText(data); } catch (e) { ta.focus(); ta.select(); document.execCommand('copy'); } cp.textContent = 'Nukopijuota'; });
         const dl = btn('Atsisiųsti failą', () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' })); a.download = 'skelbimai-' + new Date().toISOString().slice(0, 10) + '.json'; document.body.appendChild(a); a.click(); a.remove(); });
-        box.append(ta, cp, dl, btn('Uždaryti', close));
+        const manual = () => { msg.textContent = 'Skelbimų surinkta: ' + rows.length + (stop ? ' (' + stop + ')' : '') + '. Žemėlapis neatsiliepė: spausk „Kopijuoti“ ir įklijuok žemėlapio skiltyje „Kitaip“, arba atsisiųsk failą.'; box.append(ta, cp, dl, btn('Uždaryti', close)); };
+        if (!target) { manual(); return; }
+        msg.textContent = 'Skelbimų surinkta: ' + rows.length + '. Siunčiama į žemėlapį…';
+        let done = false; const t0 = Date.now();
+        const onAck = (ev) => { if (ev.data && ev.data.kkAck) { done = true; window.removeEventListener('message', onAck); msg.textContent = 'Perkelta skelbimų: ' + rows.length + '. Grįžk į žemėlapio langą.'; try { target.focus(); } catch (e) { } box.append(btn('Uždaryti', close)); setTimeout(close, 8000); } };
+        window.addEventListener('message', onAck);
+        const tick = () => { if (done) return; if (Date.now() - t0 > 40000) { window.removeEventListener('message', onAck); manual(); return; } try { target.postMessage({ kkImport: data }, '*'); } catch (e) { } setTimeout(tick, 600); };
+        tick();
+        return;
       })();
     };
-    return 'javascript:' + encodeURIComponent('(' + run.toString() + ')(' + parseDoc.toString() + ');void 0');
+    let app = ''; try { if (window.top === window && /^https?:$/.test(location.protocol)) app = location.origin + location.pathname; } catch (e) { }
+    return 'javascript:' + encodeURIComponent('(' + run.toString() + ')(' + parseDoc.toString() + ',' + JSON.stringify(app) + ');void 0');
   }
   function wireImport() {
     const code = bookmarkletCode(), a = $('#bmlink');
     a.setAttribute('href', code); $('#bmcode').value = code;
-    a.addEventListener('click', (ev) => { ev.preventDefault(); impMsg('Šį mygtuką reikia nutempti į žymių juostą (Ctrl+Shift+B ją parodo), o paspausti jau aruodas.lt ar skelbiu.lt puslapyje.'); });
+    a.addEventListener('click', (ev) => { ev.preventDefault(); impMsg('Šį mygtuką reikia nutempti į žymių juostą (jei jos nesimato, spausk Ctrl+Shift+B), o spausti jau aruode.'); });
     $('#bmcopy').onclick = async () => { const ta = $('#bmcode'); try { await navigator.clipboard.writeText(ta.value); } catch (e) { ta.focus(); ta.select(); try { document.execCommand('copy'); } catch (e2) { } } $('#bmcopy').textContent = 'Nukopijuota'; setTimeout(() => $('#bmcopy').textContent = 'Kopijuoti kodą', 1400); };
-    const pa = $('#imppaste');
-    pa.addEventListener('paste', (ev) => { const t = ev.clipboardData && ev.clipboardData.getData('text'); if (t) { ev.preventDefault(); pa.value = ''; importText(t, 'įklijuota'); } });
-    pa.addEventListener('change', () => { if (pa.value.trim()) { const t = pa.value; pa.value = ''; importText(t, 'įklijuota'); } });
+    const u = $('#impurl');
+    const go = (raw) => {
+      const t = String(raw || '').trim(); if (!t) return;
+      if (/^https?:\/\/([a-z0-9-]+\.)*(aruodas|skelbiu)\.lt\//i.test(t)) {
+        const w = window.open(t, '_blank');
+        impMsg(w ? 'Aruodas atsidarė naujame skirtuke. Ten spausk žymę „Į žemėlapį“.' : 'Naršyklė neleido atidaryti. Atidaryk nuorodą pats ir ten spausk žymę „Į žemėlapį“.');
+        u.value = ''; return;
+      }
+      if (/^https?:/i.test(t)) { impMsg('Tinka tik aruodas.lt ar skelbiu.lt paieškos nuoroda.'); return; }
+      u.value = ''; importText(t, 'įklijuota');
+    };
+    u.addEventListener('paste', (ev) => { const t = ev.clipboardData && ev.clipboardData.getData('text'); if (t) { ev.preventDefault(); go(t); } });
+    u.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') go(u.value); });
+    u.addEventListener('change', () => go(u.value));
     $('#impfile').onclick = () => $('#impinput').click();
     $('#impinput').addEventListener('change', (ev) => { const f = [...ev.target.files]; ev.target.value = ''; if (f.length) importFiles(f); });
     $('#impclear').onclick = clearListings;
@@ -1321,8 +1384,10 @@ if (typeof module !== 'undefined') module.exports = Engine;
 
   // ---------- layers
   const LAYERS = [
-    { key: 'kg', label: 'Darželiai', sw: '<span class="sw dot" style="background:var(--kg)"></span>', ids: ['kg', 'kg-dot'] },
-    { key: 'edu', label: 'Mokyklos', sw: '<span class="sw dot" style="background:var(--edu);border-radius:3px"></span>', ids: ['edu', 'edu-dot'] },
+    { key: 'kg', label: 'Darželiai valstybiniai', sw: '<span class="sw dot" style="background:var(--kg)"></span>', ids: ['kg', 'kg-dot'] },
+    { key: 'kgp', label: 'Darželiai privatūs', sw: '<span class="sw dot" style="background:var(--panel);box-shadow:inset 0 0 0 2px var(--kg)"></span>', ids: ['kgp', 'kgp-dot'] },
+    { key: 'edu', label: 'Mokyklos valstybinės', sw: '<span class="sw dot" style="background:var(--edu);border-radius:3px"></span>', ids: ['edu', 'edu-dot'] },
+    { key: 'edup', label: 'Mokyklos privačios', sw: '<span class="sw dot" style="background:var(--panel);box-shadow:inset 0 0 0 2px var(--edu);border-radius:3px"></span>', ids: ['edup', 'edup-dot'] },
     { key: 'cycle', label: 'Dviračių takai', sw: '<span class="sw line" style="background:var(--cycle)"></span>', ids: ['cycle'] },
     { key: 'forest', label: 'Miškai ir parkai', sw: '<span class="sw" style="background:var(--forest);outline:1px solid var(--line)"></span>', ids: ['forest', 'park'] },
     { key: 'track', label: 'Miško ir lauko keliukai', note: 'matosi priartinus', sw: '<span class="sw dash"></span>', ids: ['track'] },
@@ -1338,10 +1403,11 @@ if (typeof module !== 'undefined') module.exports = Engine;
     if (map) for (const id of L.ids) if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
     const cb = document.querySelector(`[data-lay="${k}"]`); if (cb) cb.checked = on;
     if (!quiet) store.set('kaunas-obj-lay', Object.assign({}, S.lay, { iso: S.iso.on }));
-    if (!on && S.card && ((k === 'lst' && S.card.type === 'lst') || ((k === 'edu' || k === 'kg') && S.card.type === 'edu' && (S.card.item.kind === 's') === (k === 'edu')))) closeCard();
+    if (!on && S.card && ((k === 'lst' && S.card.type === 'lst') || (/^(edu|kg)p?$/.test(k) && S.card.type === 'edu' && (S.card.item.kind === 's') === k.startsWith('edu') && (S.card.item.own === 'p') === k.endsWith('p')))) closeCard();
   }
   function renderLayers() {
-    const cnt = { kg: D.edu.filter((e) => e[0] === 'k').length, edu: D.edu.filter((e) => e[0] === 's').length, lst: LST.filter((l) => l.lon != null).length };
+    const ce = (k, o) => D.edu.filter((e) => e[0] === k && (e[4] || 'v') === o).length;
+    const cnt = { kg: ce('k', 'v'), kgp: ce('k', 'p'), edu: ce('s', 'v'), edup: ce('s', 'p'), lst: LST.filter((l) => l.lon != null).length };
     $('#layers').innerHTML = LAYERS.map((L) => `<div class="lrow" data-row="${L.key}"${L.key === 'lst' && !LST.length ? ' hidden' : ''}><label class="switch"><input type="checkbox" data-lay="${L.key}"${layOn(L.key) ? ' checked' : ''}>${L.sw}<span>${L.label}${cnt[L.key] != null ? ` <span class="cnt">${cnt[L.key]}</span>` : ''}${L.note ? ` <span class="cnt" style="font-family:var(--ff-ui)">(${L.note})</span>` : ''}</span></label><button class="solo" data-solo="${L.key}" aria-label="Rodyti tik: ${L.label}">Tik šis</button></div>`).join('');
     document.querySelectorAll('[data-lay]').forEach((cb) => cb.addEventListener('change', () => setLay(cb.dataset.lay, cb.checked)));
     document.querySelectorAll('[data-solo]').forEach((b) => b.onclick = () => { for (const L of LAYERS) setLay(L.key, L.key === b.dataset.solo, true); store.set('kaunas-obj-lay', Object.assign({}, S.lay, { iso: S.iso.on })); });
@@ -1380,14 +1446,14 @@ if (typeof module !== 'undefined') module.exports = Engine;
   }
   const tline = (lbl, cls, v, pm) => `<div class="tl"><i class="${cls}"></i><span class="tn">${lbl}</span><b>${v != null ? '≈ ' + Math.round(v) + ' min' : '-'}</b><span class="pm">${v != null && pm ? '±' + pm : ''}</span></div>`;
   function tipHTML(r) { return `<div class="th">${originLabel()}, ${fmtT(S.t)}</div>` + tline('Automobiliu', 'c', r.car && r.car.t, r.car && r.car.pm) + tline('Viešuoju tr.', 'p', r.pt && r.pt.t, r.pt && r.pt.pm); }
-  const HIT = ['lst', 'pinned', 'edu', 'kg', 'edu-dot', 'kg-dot'];
+  const HIT = ['lst', 'pinned', 'edu', 'kg', 'edup', 'kgp', 'edu-dot', 'kg-dot', 'edup-dot', 'kgp-dot'];
   function hitAt(point) {
     const layers = HIT.filter((id) => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
     const f = map.queryRenderedFeatures([[point.x - 7, point.y - 7], [point.x + 7, point.y + 7]], { layers });
     if (!f.length) return null;
     const o = f[0];
     if (o.layer.id === 'lst') return { type: 'lst', item: LST[o.properties.k] };
-    const e = D.edu[o.properties.i]; return { type: 'edu', item: Object.assign(E.toWorld(e[2] * 1e-5, e[3] * 1e-5), { kind: e[0], name: e[1] }) };
+    const e = D.edu[o.properties.i]; return { type: 'edu', item: Object.assign(E.toWorld(e[2] * 1e-5, e[3] * 1e-5), { kind: e[0], name: e[1], own: e[4] || 'v' }) };
   }
   let hoverRAF = 0, hoverEv = null;
   function onMove(ev) { hoverEv = ev; if (!hoverRAF) hoverRAF = requestAnimationFrame(() => { hoverRAF = 0; hover(hoverEv); }); }
@@ -1440,7 +1506,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
         ${l.when ? `<div class="th">Įkeltas ar atnaujintas: ${esc(l.when)}</div>` : ''}`;
     } else if (c.type === 'edu') {
       const p = c.item, isPin = pinned.some((q) => q.name === p.name);
-      h = `<div class="ch"><b>${esc(p.name)}</b>${close}</div><div class="facts">${p.kind === 's' ? 'Mokykla' : 'Darželis'}</div>${acts(`<button class="linkbtn" data-c="pin">${isPin ? 'Pašalinti iš pasirinktų' : 'Pridėti prie pasirinktų'}</button>`)}`;
+      h = `<div class="ch"><b>${esc(p.name)}</b>${close}</div><div class="facts">${p.kind === 's' ? (p.own === 'p' ? 'Privati mokykla' : 'Valstybinė ar savivaldybės mokykla') : (p.own === 'p' ? 'Privatus darželis' : 'Valstybinis ar savivaldybės darželis')}</div>${acts(`<button class="linkbtn" data-c="pin">${isPin ? 'Pašalinti iš pasirinktų' : 'Pridėti prie pasirinktų'}</button>`)}`;
     }
     box.innerHTML = h; box.hidden = false;
     box.querySelectorAll('[data-c]').forEach((b) => b.onclick = () => {
@@ -1680,6 +1746,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     if (!mainReady || !mapReady || !WK.ready) return;
     $('#busy').hidden = true; recomputeAll(); renderCompare();
     restoreListings();
+    if (pendingImport) { importText(pendingImport, 'aruodas'); pendingImport = null; }
   }
 
   async function fetchText(url) {
@@ -1700,6 +1767,10 @@ if (typeof module !== 'undefined') module.exports = Engine;
   }
   window.addEventListener('error', (e) => { const l = $('#loading'); if (l && !l.hidden) l.textContent = 'Klaida: ' + (e.message || e.error); });
   window.addEventListener('unhandledrejection', (e) => { const l = $('#loading'); if (l && !l.hidden) l.textContent = 'Klaida: ' + ((e.reason && e.reason.message) || e.reason); });
+  const isPhone = () => matchMedia('(max-width: 820px)').matches;
+  if (isPhone()) document.body.classList.add('panel-off');
+  document.getElementById('panelbtn').onclick = () => { document.body.classList.remove('panel-off'); document.getElementById('panel').scrollTop = 0; };
+  document.getElementById('panelhide').onclick = () => document.body.classList.add('panel-off');
   async function start() {
     if (!ML || !(function () { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) { return false; } })()) { $('#loading').textContent = 'Šiai naršyklei reikia WebGL. Atidaryk puslapį naujesnėje naršyklėje.'; return; }
     colors = readColors();

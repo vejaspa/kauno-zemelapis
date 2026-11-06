@@ -1,5 +1,5 @@
 // Keeps the app working offline after the first visit. Bump VERSION after changing files.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CORE = ['./', 'index.html', 'kaunas.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.js'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
