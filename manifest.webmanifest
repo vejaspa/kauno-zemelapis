@@ -1,0 +1,15 @@
+{
+  "name": "Kauno objektų žemėlapis",
+  "short_name": "Kauno žemėlapis",
+  "description": "Darželiai, mokyklos, dviračių takai, miškai, viešasis transportas ir kelionės laikas Kaune ir Kauno rajone.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f3",
+  "theme_color": "#1e5a7a",
+  "lang": "lt",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
