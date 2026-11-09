@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>body{margin:0;padding:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px)}</style>
 <script src="config.js"></script>
-<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=3cab8059';
+<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=e5c84155';
 if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </head>
 <body>
@@ -401,7 +401,7 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
     <details class="sec" id="sec-notes">
       <summary><h2>Kaip skaičiuojama</h2></summary>
       <div class="secb notes">
-        <p><b>Automobilis.</b> Maršrutas ieškomas OpenStreetMap kelių tinkle (Geofabrik, 2026-11-03 duomenys). Greitis pagal kelio klasę ir leistiną greitį: aplinkkeliuose ir magistralėse pagal Kelių direkcijos (eismoinfo.lt) detektorių matuojamą greitį, miesto gatvėse sumažintas dėl sankryžų ir šviesoforų. Kamščiai pridedami pagal paros laiką (kreivės forma pagal TomTom Traffic Index 2025 Kaunui) ir kryptį: ryte stringa važiuojant į miestą, vakare iš miesto. Modelis sutikrintas su realiai važiuojamu maršrutu Kalniečiai → Ilgakiemis 08:25 (apie 23 min).</p>
+        <p><b>Automobilis.</b> Maršrutas ieškomas OpenStreetMap kelių tinkle (Geofabrik, 2026-11-03 duomenys). Greitis pagal kelio klasę ir leistiną greitį: aplinkkeliuose ir magistralėse pagal Kelių direkcijos (eismoinfo.lt) detektorių matuojamą greitį, miesto gatvėse sumažintas dėl sankryžų ir šviesoforų. Kamščiai pridedami pagal paros laiką (kreivės forma pagal TomTom Traffic Index 2025 Kaunui) ir kryptį: ryte stringa važiuojant į miestą, vakare iš miesto. Priemiesčiai, iš kurių yra tik vienas ar du išvažiavimai (Užliedžiai ir Giraitė, Akademija ir Ringaudai, Raudondvaris, Garliava, Domeikava, Saliai ir Smiltynai), gauna papildomą eilę prie išvažiavimo: ryte išvažiuojant iš rajono, vakare įvažiuojant į jį. Apvažiuoti jos negalima, todėl ji pridedama visiems tokiems maršrutams; kas važiuoja magistrale ar plentu pro šalį, jos negauna. A6 ruožas iš Kauno link Karmėlavos vakare sulėtintas iki maždaug 40 km/h pagal Kelių direkcijos detektorius. Modelis sutikrintas su realiai važiuojamu maršrutu Kalniečiai → Ilgakiemis 08:25 (apie 23 min) ir su Google įprastų laikų intervalais Užliedžiai ↔ Murava. Maršruto kortelėje rodoma ir „blogos dienos“ trukmė, maždaug kaip viršutinė Google intervalo riba.</p>
         <p><b>Viešasis transportas.</b> Tikras Kauno viešojo transporto (KVT) GTFS tvarkaraštis, galiojantis nuo 2026-10-24. Laikas skaičiuojamas nuo išvykimo: ėjimas iki stotelės, laukimas, važiavimas, persėdimai (bent 2 min) ir ėjimas iki tikslo. Ėjimas iki 1,2 km.</p>
         <ul>
           <li>Tai modelis, ne gyvas eismas: avarijos, remontai ir oras nerodomi. Piko metu realus laikas gali skirtis maždaug ±20 %.</li>
@@ -539,7 +539,8 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
         self.postMessage({ type: 'res', id: m.id, data: { car, pt, fc, mode: m.mode } }, [car.buffer, pt.buffer]);
       } else if (m.type === 'route') {
         const car = Engine.carRoute(m.A, m.B, m.day, m.t), pt = Engine.transitRoute(m.A, m.B, m.day, m.t), free = Engine.carRoute(m.A, m.B, m.day, 180);
-        self.postMessage({ type: 'res', id: m.id, data: { car: car ? { t: car.t, len: car.len } : null, carGeo: carGeo(car), pt: cleanPt(pt), ptGeo: ptGeo(pt, m.A, m.B), free: free ? free.t : null } });
+        Engine.setRisk(1); const bad = Engine.carRoute(m.A, m.B, m.day, m.t); Engine.setRisk(0);
+        self.postMessage({ type: 'res', id: m.id, data: { car: car ? { t: car.t, len: car.len } : null, carGeo: carGeo(car), pt: cleanPt(pt), ptGeo: ptGeo(pt, m.A, m.B), free: free ? free.t : null, bad: bad ? bad.t : null } });
       } else if (m.type === 'profile') {
         const times = [], car = [], pt = [];
         for (let t = 300; t <= 1410; t += 15) { times.push(t); const c = Engine.carRoute(m.A, m.B, m.day, t); car.push(c ? c.t : NaN); pt.push(Engine.transitRoute(m.A, m.B, m.day, t).t); }
@@ -648,10 +649,29 @@ const Engine = (function () {
   // class order: motorway, trunk, primary, secondary, tertiary, unclassified, residential, living_street
   const LIM_U = [110, 70, 50, 50, 50, 50, 40, 20], LIM_R = [110, 90, 90, 90, 70, 60, 40, 20];
   const F_U = [1.0, 1.0, .95, .92, .86, .78, .7, .6], F_R = [1.03, 1.03, 1.0, .97, .92, .82, .68, .55];   // LAKD detectors on A5/A6/141: off-peak traffic runs at or slightly over the limit
-  const W_U = [.35, .4, 1.15, 1.1, .95, .6, .35, .2], W_R = [.15, .2, .3, .25, .15, .08, .05, .05];   // bypasses and trunk roads keep flowing, the slowdown is at lights on city arterials
+  const W_U = [.35, .9, 1.15, 1.1, .95, .6, .35, .2], W_R = [.2, .35, .35, .25, .15, .08, .05, .05];
 
   // calibration: urban free-flow factor and traffic weight scale (set from drive-time checks)
   const CAL = { fu: 1, w: 0.85 };
+  const JAM = new Set(['Islandijos pl.', 'Raudondvario pl.', 'Užnemunės g.', 'Šakių pl.', 'Jonavos g.', 'Savanorių pr.', 'Pramonės pr.', 'Ateities pl.', 'Veiverių g.', 'Vytauto pr.', 'Karaliaus Mindaugo pr.', 'Kęstučio g.', 'Raudondvario g.', 'Ringaudų g.', 'Jurbarko pl.']);
+  // Suburbs with few road exits: every car leaving in the morning goes through one or two junctions, so the queue sits
+  // at the exit and there is no way round it. Modelled as minutes added when a route crosses the district boundary
+  // (outwards in the morning rush, inwards in the evening). Calibrated on Google typical ranges, aiming at low + 40 % of the spread.
+  // c = centre lon/lat, r = radius m, am / pm = queue minutes at the peak.
+  const EXITS = [
+    { n: 'Užliedžiai, Giraitė', c: [23.828, 54.966], r: 2400, am: 13, pm: 5 },
+    { n: 'Akademija, Ringaudai', c: [23.812, 54.890], r: 1300, am: 6, pm: 6 },
+    { n: 'Raudondvaris', c: [23.780, 54.940], r: 1800, am: 6, pm: 6 },
+    { n: 'Garliava', c: [23.878, 54.812], r: 1700, am: 5, pm: 5 },
+    { n: 'Domeikava', c: [23.915, 54.972], r: 1600, am: 5, pm: 4 },
+    { n: 'Saliai, Smiltynai', c: [23.985, 54.967], r: 2000, am: 4, pm: 4 },
+  ];
+  // Express road sections that slow down every weekday rush (eismoinfo.lt detectors, 2026-11-09 17:00).
+  // dir: 1 = towards the city, -1 = away from it; v = km/h at the peak.
+  const SLOW = [
+    { n: 'A6 Kaunas → Karmėlava', c: [24.060, 54.968], r: 2600, dir: -1, pm: 40 },
+  ];
+  let RISK = 0;   // 1 = a bad day: heavier traffic and longer exit queues
   let D, G = {};
 
   function build(data) {
@@ -664,7 +684,7 @@ const Engine = (function () {
     const e = D.e, nE = e.u.length; G.nE = nE;
     G.mx = new Float64Array(D.mid.length / 2); G.my = new Float64Array(D.mid.length / 2);
     for (let i = 0; i < G.mx.length; i++) { G.mx[i] = wx(D.mid[2 * i]); G.my[i] = wy(D.mid[2 * i + 1]); }
-    G.base = new Float64Array(nE); G.w = new Float64Array(nE);
+    G.base = new Float64Array(nE); G.w = new Float64Array(nE); G.ex = new Uint8Array(nE);
     const cx = toWorld(CENTER.lon, CENTER.lat);
     for (let i = 0; i < nE; i++) {
       const c = e.c[i], urb = e.urb[i];
@@ -674,13 +694,25 @@ const Engine = (function () {
       if (e.l[i]) v = Math.min(v, urb ? 35 : 45);
       v = Math.max(v, 8);
       G.base[i] = e.len[i] / (v * 1000 / 60);
-      let w = (urb ? W_U : W_R)[c] * CAL.w;
-      if (!urb) {
-        const mx = (G.nx[e.u[i]] + G.nx[e.v[i]]) / 2, my = (G.ny[e.u[i]] + G.ny[e.v[i]]) / 2;
-        const dc = Math.hypot(mx - cx.x, my - cx.y);
-        if (dc < 15000 && c <= 3) w *= 1.2;   // approach roads into the city queue at the edge in rush hour
-      }
-      G.w[i] = w;
+      let w = (urb ? W_U : W_R)[c];
+      // grade-separated roads (motorway, 90 km/h dual carriageways such as Vakarinis aplinkkelis or Via Baltica) keep flowing
+      const express = c === 0 || (c === 1 && lim >= 90);
+      if (express) { w = urb ? 0.35 : 0.2; G.ex[i] = 1; }
+      const mx = (G.nx[e.u[i]] + G.nx[e.v[i]]) / 2, my = (G.ny[e.u[i]] + G.ny[e.v[i]]) / 2;
+      const dc = Math.hypot(mx - cx.x, my - cx.y);
+      // single-carriageway roads into the city (Raudondvario pl., Akademija, Ringaudai, Užliedžiai side) queue in rush hour
+      if (!urb && !express && dc < 15000 && c >= 1 && c <= 4) w *= 1.8;
+      // known rush-hour corridors with signal junctions (local knowledge, not visible in the road data)
+      if (e.nm[i] && JAM.has(D.names[e.nm[i] - 1])) w = Math.max(w, 1.35);
+      G.w[i] = w * CAL.w;
+    }
+    // bridges over the Nemunas, Neris and the lagoon: bottlenecks in both directions
+    G.bridge = new Uint8Array(nE);
+    for (let i = 0; i < nE; i++) {
+      if (e.c[i] > 4) continue;
+      const [xs, ys] = edgePts(i); let hit = false;
+      for (let k = 0; k < xs.length - 1 && !hit; k++) { const n = Math.ceil(Math.hypot(xs[k + 1] - xs[k], ys[k + 1] - ys[k]) / 20); for (let s = 0; s <= n; s++) if (waterAt(xs[k] + (xs[k + 1] - xs[k]) * s / n, ys[k] + (ys[k + 1] - ys[k]) * s / n) === 1) { hit = true; break; } }
+      if (hit && Math.hypot((xs[0] - cx.x), (ys[0] - cx.y)) < 14000) { G.bridge[i] = 1; G.w[i] = Math.max(G.w[i], 1.4 * CAL.w); }
     }
     G.inb = new Int8Array(nE); G.fade = new Float32Array(nE);
     for (let i = 0; i < nE; i++) {
@@ -688,6 +720,13 @@ const Engine = (function () {
       G.inb[i] = dv < du - 5 ? 1 : dv > du + 5 ? -1 : 0;
       G.fade[i] = Math.min(1, Math.max(0, ((du + dv) / 2 - 1500) / 3000));
     }
+    G.zn = new Int8Array(nN); G.dc = new Float32Array(nN);
+    for (let n = 0; n < nN; n++) G.dc[n] = Math.hypot(G.nx[n] - cx.x, G.ny[n] - cx.y);
+    G.zdc = EXITS.map((z) => { const c = toWorld(z.c[0], z.c[1]); return Math.hypot(c.x - cx.x, c.y - cx.y); });
+    EXITS.forEach((z, k) => { const c = toWorld(z.c[0], z.c[1]); for (let n = 0; n < nN; n++) if (Math.hypot(G.nx[n] - c.x, G.ny[n] - c.y) < z.r) G.zn[n] = k + 1; });
+    for (let i = 0; i < nE; i++) if (G.ex[i] || e.c[i] <= 1) G.zn[e.u[i]] = G.zn[e.v[i]] = 0;   // through roads (motorway, trunk) pass by; the queue sits where local roads join them
+    G.slow = new Int8Array(nE); G.vf = new Float32Array(nE);
+    SLOW.forEach((z, k) => { const c = toWorld(z.c[0], z.c[1]); for (let i = 0; i < nE; i++) if (G.ex[i] && Math.hypot((G.nx[e.u[i]] + G.nx[e.v[i]]) / 2 - c.x, (G.ny[e.u[i]] + G.ny[e.v[i]]) / 2 - c.y) < z.r) { G.slow[i] = k + 1; G.vf[i] = e.len[i] / G.base[i] * 0.06; } });   // the queue sits where local roads join the express road
     // CSR adjacency
     const deg = new Int32Array(nN + 1);
     for (let i = 0; i < nE; i++) { if (e.ow[i] !== 2) deg[e.u[i]]++; if (e.ow[i] !== 1) deg[e.v[i]]++; }
@@ -768,16 +807,37 @@ const Engine = (function () {
   // Rush hour is one-directional: in the morning traffic queues into the city, in the evening out of it.
   // from = the node the edge is entered from; the factor fades out near the centre where direction means little.
   function dirMul(i, from, day, t) {
-    const f = G.fade[i]; if (!f || from == null || day !== 'wd') return 1;
+    const f = G.fade[i]; if (!f || from == null || day !== 'wd' || G.bridge[i]) return 1;
     const inb = (from === D.e.u[i] ? G.inb[i] : -G.inb[i]); if (!inb) return 1;
     const h = ((t % 1440) + 1440) % 1440 / 60, am = Math.exp(-((h - 8) ** 2) / 4.5), pm = Math.exp(-((h - 17) ** 2) / 4.5);
     const k = inb > 0 ? 1 + f * (0.3 * am - 0.4 * pm) : 1 - f * (0.6 * am - 0.2 * pm);
     return Math.max(0.3, k);
   }
-  function edgeCost(i, day, t, from) { return G.base[i] * (1 + congestion(day, t) * G.w[i] * dirMul(i, from, day, t)); }
+  function exitQueue(i, from, day, t) {
+    if (from == null || day !== 'wd' || G.ex[i] || D.e.c[i] <= 1) return 0;   // through traffic on motorways and trunks passes the district untouched
+    const to = from === D.e.u[i] ? D.e.v[i] : D.e.u[i], a = G.zn[from], b = G.zn[to]; if (a === b) return 0;
+    // only towards the city in the morning and away from it in the evening: driving through against the flow costs nothing
+    // the crossing counts when it is on the city side of the district (closer to the centre than the district itself)
+    // morning: trips that start inside the district (every exit queues); evening: every trip coming in from outside
+    const h = ((t % 1440) + 1440) % 1440 / 60; let q = 0;
+    if (a && a === G.oz) q += EXITS[a - 1].am * Math.exp(-((h - 7.5) ** 2) / 1.19);
+    if (b && b !== G.oz) q += EXITS[b - 1].pm * Math.exp(-((h - 17.25) ** 2) / 1.6);
+    return q * (RISK ? 2 : 1);
+  }
+  function slowSec(i, from, day, t) {
+    const k = G.slow[i]; if (!k || from == null || day !== 'wd') return 0;
+    const z = SLOW[k - 1], inb = from === D.e.u[i] ? G.inb[i] : -G.inb[i]; if (inb !== z.dir) return 0;
+    const h = ((t % 1440) + 1440) % 1440 / 60, q = z.pm ? Math.exp(-((h - 17.25) ** 2) / 1.6) : 0, qa = z.am ? Math.exp(-((h - 7.75) ** 2) / 1.19) : 0;
+    let x = 0; if (q && z.pm < G.vf[i]) x += q * (G.vf[i] / z.pm - 1); if (qa && z.am < G.vf[i]) x += qa * (G.vf[i] / z.am - 1);
+    return G.base[i] * x * (RISK ? 1.5 : 1);
+  }
+  function edgeCost(i, day, t, from) { return G.base[i] * (1 + congestion(day, t) * G.w[i] * dirMul(i, from, day, t) * (RISK ? 1.7 : 1)) + exitQueue(i, from, day, t) + slowSec(i, from, day, t); }
+  function setRisk(r) { RISK = r ? 1 : 0; }
+  function zoneAt(x, y) { for (let k = 0; k < EXITS.length; k++) { const c = toWorld(EXITS[k].c[0], EXITS[k].c[1]); if (Math.hypot(x - c.x, y - c.y) < EXITS[k].r) return k + 1; } return 0; }
 
   // time-dependent Dijkstra from a snapped point
   function dijkstra(sp, day, t0, opts = {}) {
+    { const u = D.e.u[sp.e], v = D.e.v[sp.e]; G.oz = zoneAt((G.nx[u] + G.nx[v]) / 2, (G.ny[u] + G.ny[v]) / 2); }
     const nN = G.nN, dist = new Float64Array(nN).fill(Infinity), pe = new Int32Array(nN).fill(-1);
     const heapN = new Int32Array(G.off[nN] + 16), heapK = new Float64Array(G.off[nN] + 16); let hs = 0;
     function push(n, k) { let i = hs++; while (i > 0) { const p = (i - 1) >> 1; if (heapK[p] <= k) break; heapN[i] = heapN[p]; heapK[i] = heapK[p]; i = p; } heapN[i] = n; heapK[i] = k; }
@@ -978,7 +1038,7 @@ const Engine = (function () {
     return out;
   }
 
-  return { CAL, build, G: () => G, D: () => D, toWorld, toLonLat, edgePts, snap, carRoute, transitRoute, carGrid, transitGrid, gridInit, congestion, CENTER, WALK, edgeCost };
+  return { CAL, EXITS, setRisk, build, G: () => G, D: () => D, toWorld, toLonLat, edgePts, snap, carRoute, transitRoute, carGrid, transitGrid, gridInit, congestion, CENTER, WALK, edgeCost };
 })();
 if (typeof module !== 'undefined') module.exports = Engine;
 </script>
@@ -1241,12 +1301,12 @@ if (typeof module !== 'undefined') module.exports = Engine;
   let routeKey = '';
   function computeRoute(noProfile) {
     if (!S.route || !S.A || !S.B) {
-      S.car = S.pt = S.prof = S.free = null; routeKey = '';
+      S.car = S.pt = S.prof = S.free = S.bad = null; routeKey = '';
       if (map) { map.getSource('car').setData(EMPTY); map.getSource('ptride').setData(EMPTY); map.getSource('ptwalk').setData(EMPTY); }
       renderResults(); renderProfile(); return;
     }
     req('route', { type: 'route', A: pt2(S.A), B: pt2(S.B), day: S.day, t: S.t }, (d) => {
-      S.car = d.car; S.pt = d.pt; S.free = d.free;
+      S.car = d.car; S.pt = d.pt; S.free = d.free; S.bad = d.bad;
       if (S.route && S.A && S.B) {
         map.getSource('car').setData(d.carGeo ? { type: 'Feature', properties: {}, geometry: d.carGeo } : EMPTY);
         map.getSource('ptride').setData(d.ptGeo ? { type: 'Feature', properties: {}, geometry: d.ptGeo.ride } : EMPTY);
@@ -1800,7 +1860,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     if (S.car) {
       car.querySelector('.big').textContent = fmtMin(S.car.t);
       const extra = S.free ? Math.max(0, Math.round(S.car.t - S.free)) : 0;
-      car.querySelector('.sub').textContent = `${(S.car.len / 1000).toFixed(1)} km · atvyksi ${fmtT(S.t + S.car.t)}` + (extra >= 1 ? ` · kamščiai +${extra} min` : '');
+      car.querySelector('.sub').textContent = `${(S.car.len / 1000).toFixed(1)} km · atvyksi ${fmtT(S.t + S.car.t)}` + (extra >= 1 ? ` · kamščiai +${extra} min` : '') + (S.bad && S.bad - S.car.t >= 3 ? ` · blogą dieną iki ${Math.round(S.bad)} min` : '');
     } else { car.querySelector('.big').textContent = '-'; car.querySelector('.sub').textContent = 'Taškas per toli nuo kelio'; }
     legs.innerHTML = '';
     if (!S.pt) return;
