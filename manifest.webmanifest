@@ -1,25 +1,31 @@
 {
-  "name": "Kur gyventi Kaune",
-  "short_name": "Kur gyventi",
-  "description": "Darželiai, mokyklos, dviračių takai ir kelionės laikas Kaune ir Kauno rajone. Įsikelk skelbimus iš aruodo ir pamatyk, kas aplink.",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#f4f6f3",
-  "theme_color": "#1e5a7a",
-  "lang": "lt",
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+ "name": "Kur gyventi Kaune",
+ "short_name": "Kur gyventi",
+ "description": "Kelionės laikas pagal paros metą, darželiai, mokyklos, gamta ir skelbimai Kaune ir Kauno rajone.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#faf9f6",
+ "theme_color": "#26312d",
+ "lang": "lt",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
 }

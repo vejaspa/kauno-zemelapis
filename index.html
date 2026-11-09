@@ -3,53 +3,54 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Darželiai, mokyklos, dviračių takai ir kelionės laikas Kaune ir Kauno rajone. Įsikelk skelbimus iš aruodo ir pamatyk, kas aplink.">
-<meta name="theme-color" content="#1e5a7a">
+<meta name="description" content="Kelionės laikas pagal paros metą, darželiai, mokyklos, gamta ir skelbimai Kaune ir Kauno rajone.">
+<meta name="theme-color" content="#26312d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Kur gyventi Kaune">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kur gyventi">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>body{margin:0;padding:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px)}</style>
+<script src="config.js"></script>
+<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=c768011c';
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </head>
 <body>
 <title>Kur gyventi Kaune</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Layout: one-screen tool. Control column on the left (stacks under the map on phones), the map fills the rest. */
+/* Layout: control column on the left (a sheet over the map on phones), the map fills the rest. */
 :root {
-  --bg: #f4f6f3; --panel: #fbfcfa; --fg: #17201c; --muted: #5a6762; --line: #d8dfd9; --accent: #1e5a7a; --accent-ink: #ffffff; --chip: #e9eeea;
-  --land: #e9ede5; --water: #b4cfdc; --water-edge: #8fb4c6; --road-mway: #e8a35a; --road-major: #f3d48f; --road-mid: #fbfaf5; --road-minor: #ffffff; --road-case: #c3cbc0;
-  --rail: #9aa39d; --bound: #6f7c75; --label: #26302b; --halo: #fbfcfa; --bus: #c8463e; --trolley: #2f78b5; --stop: #6f7c75;
-  --car: #1e3f66; --pt: #b0369b; --walk: #3c4a44; --mark-a: #1e3f66; --mark-b: #b5432a; --mark-o: #17201c; --iso-edge: #17201c; --iso-alpha: 0.42;
+  --bg: #eeebe4; --panel: #faf9f6; --fg: #252b28; --muted: #6c706a; --faint: #9a9d96; --line: #d6d7cf; --accent: #26312d; --accent-ink: #faf9f6; --brass: #bda27a; --chip: #eeebe4; --hover: #f2f0ea;
+  --land: #f1efe9; --water: #c5d5db; --water-edge: #a7bec7; --road-mway: #dcc39f; --road-major: #f1e6d2; --road-mid: #ffffff; --road-minor: #ffffff; --road-case: #d8d6cd;
+  --rail: #a3a59e; --bound: #858a84; --label: #252b28; --halo: #faf9f6; --bus: #d0574f; --trolley: #3f7fb8; --stop: #7d8287;
+  --car: #14324f; --pt: #a8399a; --walk: #3e4448; --mark-a: #14324f; --mark-b: #b8432c; --mark-o: #111417; --iso-edge: #111417; --iso-alpha: 0.40;
   --i5: #157a55; --i10: #45a265; --i15: #97c457; --i20: #e5cf47; --i25: #f0a03f; --i30: #dd6b39;
-  --forest: #d2e3c8; --park: #c3dfb6; --cycle: #12856a; --track: #a08b63; --lst: #5a3fd0; --lst-off: #9aa49f; --poi: #23302b; --edu: #2f6f99; --kg: #c0782b; --pin: #b5432a;
-  --ff-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --ff-ui: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --ff-num: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --forest: #dfe4d4; --park: #d2dfc6; --cycle: #108466; --track: #a8957a; --lst: #4b3bc4; --lst-off: #a3a7aa; --poi: #23302b; --edu: #2a668f; --kg: #c0762a; --pin: #b8432c;
+  --ff: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #111614; --panel: #161c1a; --fg: #e4ebe7; --muted: #95a39c; --line: #2a3430; --accent: #6fb4d8; --accent-ink: #0d1a22; --chip: #1f2825;
-  --land: #1a201e; --water: #213a48; --water-edge: #2e5063; --road-mway: #b9773c; --road-major: #8c7744; --road-mid: #4a524e; --road-minor: #3a423e; --road-case: #101412;
-  --rail: #5d6762; --bound: #7d8a84; --label: #dbe3df; --halo: #161c1a; --bus: #e0675f; --trolley: #5aa2dc; --stop: #9aa8a1;
-  --car: #8cc3f2; --pt: #e47bd3; --walk: #c2cdc7; --mark-a: #3c78b8; --mark-b: #d0603f; --mark-o: #e4ebe7; --iso-edge: #e4ebe7; --iso-alpha: 0.34;
-  --forest: #1f2c23; --park: #233421; --cycle: #46c29c; --track: #7b6d50; --lst: #a693ff; --lst-off: #5d6863; --poi: #dfe8e3; --edu: #6fb4d8; --kg: #e2a35c; --pin: #e87a57;
+  --bg: #151917; --panel: #1b201e; --fg: #ebe9e3; --muted: #a2a59d; --faint: #72766f; --line: #313833; --accent: #ebe9e3; --accent-ink: #1b201e; --brass: #c7ad85; --chip: #252b28; --hover: #222825;
+  --land: #1a1e1c; --water: #1d2b31; --water-edge: #2a4149; --road-mway: #86694a; --road-major: #57503f; --road-mid: #383d39; --road-minor: #2e3330; --road-case: #101311;
+  --rail: #5c615b; --bound: #848a83; --label: #e0ded8; --halo: #1b201e; --bus: #e0675f; --trolley: #5aa2dc; --stop: #9aa0a5;
+  --car: #8cc3f2; --pt: #e47bd3; --walk: #c4c9cc; --mark-a: #3c78b8; --mark-b: #d0603f; --mark-o: #ededec; --iso-edge: #ededec; --iso-alpha: 0.34;
+  --forest: #1d241e; --park: #212c20; --cycle: #46c29c; --track: #7b6d58; --lst: #a693ff; --lst-off: #5d6166; --poi: #dfe3e0; --edu: #6fb4d8; --kg: #e2a35c; --pin: #e87a57;
   color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --bg: #111614; --panel: #161c1a; --fg: #e4ebe7; --muted: #95a39c; --line: #2a3430; --accent: #6fb4d8; --accent-ink: #0d1a22; --chip: #1f2825;
-  --land: #1a201e; --water: #213a48; --water-edge: #2e5063; --road-mway: #b9773c; --road-major: #8c7744; --road-mid: #4a524e; --road-minor: #3a423e; --road-case: #101412;
-  --rail: #5d6762; --bound: #7d8a84; --label: #dbe3df; --halo: #161c1a; --bus: #e0675f; --trolley: #5aa2dc; --stop: #9aa8a1;
-  --car: #8cc3f2; --pt: #e47bd3; --walk: #c2cdc7; --mark-a: #3c78b8; --mark-b: #d0603f; --mark-o: #e4ebe7; --iso-edge: #e4ebe7; --iso-alpha: 0.34;
-  --forest: #1f2c23; --park: #233421; --cycle: #46c29c; --track: #7b6d50; --lst: #a693ff; --lst-off: #5d6863; --poi: #dfe8e3; --edu: #6fb4d8; --kg: #e2a35c; --pin: #e87a57;
+  --bg: #151917; --panel: #1b201e; --fg: #ebe9e3; --muted: #a2a59d; --faint: #72766f; --line: #313833; --accent: #ebe9e3; --accent-ink: #1b201e; --brass: #c7ad85; --chip: #252b28; --hover: #222825;
+  --land: #1a1e1c; --water: #1d2b31; --water-edge: #2a4149; --road-mway: #86694a; --road-major: #57503f; --road-mid: #383d39; --road-minor: #2e3330; --road-case: #101311;
+  --rail: #5c615b; --bound: #848a83; --label: #e0ded8; --halo: #1b201e; --bus: #e0675f; --trolley: #5aa2dc; --stop: #9aa0a5;
+  --car: #8cc3f2; --pt: #e47bd3; --walk: #c4c9cc; --mark-a: #3c78b8; --mark-b: #d0603f; --mark-o: #ededec; --iso-edge: #ededec; --iso-alpha: 0.34;
+  --forest: #1d241e; --park: #212c20; --cycle: #46c29c; --track: #7b6d58; --lst: #a693ff; --lst-off: #5d6166; --poi: #dfe3e0; --edu: #6fb4d8; --kg: #e2a35c; --pin: #e87a57;
   color-scheme: dark; }
 html, body { height: 100%; }
-body { background: var(--bg); color: var(--fg); font-family: var(--ff-ui); font-size: 14px; line-height: 1.45; }
+body { background: var(--bg); color: var(--fg); font-family: var(--ff); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
 * { box-sizing: border-box; }
-.app { display: grid; grid-template-columns: 384px 1fr; height: 100%; }
-.panel { background: var(--panel); border-right: 1px solid var(--line); overflow-y: auto; padding-block: 18px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: 16px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.num { font-variant-numeric: tabular-nums; }
+.app { display: grid; grid-template-columns: 380px 1fr; height: 100%; }
+.panel { background: var(--panel); border-right: 1px solid var(--line); overflow-y: auto; padding-block: 22px 28px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: 20px; display: flex; flex-direction: column; gap: 0; min-width: 0; }
 .mapwrap { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
 .maplibregl-map{overflow:hidden;position:relative;-webkit-tap-highlight-color:rgb(0 0 0/0)}
 .maplibregl-canvas{left:0;position:absolute;top:0}
@@ -63,142 +64,185 @@ body { background: var(--bg); color: var(--fg); font-family: var(--ff-ui); font-
 #map { position: absolute; inset: 0; background: var(--land); }
 .mk { cursor: grab; line-height: 0; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); }
 .mk:active { cursor: grabbing; }
-.pinned { display: flex; gap: 6px; flex-wrap: wrap; }
-.pchip { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding-right: 4px; }
-.pchip .chipbtn { border: 0; }
-.pchip .x { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 3px; }
 [hidden] { display: none !important; }
-.lrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 26px; }
-.lrow .switch { min-width: 0; }
-.cnt { color: var(--muted); font: 500 11.5px var(--ff-num); }
-.solo { flex: none; border: 1px solid var(--line); background: transparent; color: var(--muted); font: 500 11.5px var(--ff-ui); border-radius: 999px; padding: 2px 8px; cursor: pointer; }
-.solo:hover { color: var(--fg); border-color: var(--accent); }
-.steps { margin: 0; padding-left: 18px; font-size: 13px; color: var(--fg); display: flex; flex-direction: column; gap: 8px; }
-#impurl { display: block; margin-top: 5px; font-family: var(--ff-ui); font-size: 13px; }
-.bm { display: inline-block; background: var(--accent); color: var(--accent-ink); font: 600 12.5px var(--ff-ui); padding: 3px 10px; border-radius: 999px; text-decoration: none; cursor: grab; }
-#impsec textarea, #bmcode, #impurl { width: 100%; font: 500 12px var(--ff-num); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; resize: vertical; }
-#impsec.drop { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 8px; }
-details.mini { border-top: 0; padding-top: 0; }
-details.mini summary { font-size: 12.5px; color: var(--accent); }
-#card .ttl { font-size: 12.5px; }
-#card .sch { font-size: 12px; font-weight: 600; margin-top: 4px; }
-header h1 { font-family: var(--ff-display); font-size: 24px; line-height: 1.1; margin: 0 0 4px; letter-spacing: -0.01em; text-wrap: balance; }
+
+/* header */
+header { padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+header h1 { font-size: 27px; line-height: 1.1; font-weight: 400; letter-spacing: -0.035em; margin: 10px 0 8px; }
+header .eyebrow { font-size: 10px; letter-spacing: 2.3px; text-transform: uppercase; font-weight: 500; color: var(--muted); }
+header .eyebrow::before, details.sec > summary h2::before { content: ""; display: inline-block; width: 18px; height: 1px; background: var(--brass); vertical-align: middle; margin-right: 9px; }
 header p { margin: 0; color: var(--muted); font-size: 13px; }
-section { display: flex; flex-direction: column; gap: 10px; }
-h2 { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0; font-weight: 600; }
+
+/* collapsible sections */
+details.sec { border-bottom: 1px solid var(--line); }
+details.sec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 0; user-select: none; }
+details.sec > summary::-webkit-details-marker { display: none; }
+details.sec > summary h2 { font-size: 10px; text-transform: uppercase; letter-spacing: 2.3px; color: var(--fg); margin: 0; font-weight: 500; white-space: nowrap; }
+details.sec > summary .sx { color: var(--muted); font-size: 12.5px; margin-left: auto; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+details.sec > summary::after { content: ""; flex: none; width: 7px; height: 7px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s; }
+details.sec[open] > summary::after { transform: rotate(-135deg) translate(-1px, -1px); }
+details.sec[open] > summary .sx { display: none; }
+.secb { display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px; }
+h3 { font-size: 12.5px; font-weight: 600; margin: 0; }
+
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.seg { display: inline-flex; background: var(--chip); border-radius: 8px; padding: 3px; gap: 2px; flex-wrap: wrap; }
-.seg button { border: 0; background: transparent; color: var(--fg); font: 500 13px var(--ff-ui); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
-.seg button[aria-pressed="true"] { background: var(--panel); box-shadow: 0 1px 2px rgb(0 0 0 / .15); font-weight: 600; }
-button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg { display: inline-flex; background: var(--chip); border-radius: 0; padding: 2px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: 500 13px var(--ff); padding: 6px 11px; border-radius: 0; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--panel); color: var(--fg); box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / .06); }
+button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 .clock { display: flex; align-items: baseline; gap: 10px; }
-.clock .big { font-family: var(--ff-num); font-size: 34px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.clock .big { font-size: 46px; font-weight: 300; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; line-height: 1; }
 .clock span { color: var(--muted); font-size: 13px; }
 input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
-.ticks { display: flex; justify-content: space-between; font: 500 10.5px var(--ff-num); color: var(--muted); margin-top: -4px; }
+.ticks { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--faint); margin-top: -6px; font-variant-numeric: tabular-nums; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.chips button { border: 1px solid var(--line); background: transparent; color: var(--fg); font: 500 12.5px var(--ff-ui); padding: 4px 9px; border-radius: 999px; cursor: pointer; }
-.chipbtn { border: 1px solid var(--line); background: transparent; color: var(--fg); font: 500 12.5px var(--ff-ui); padding: 4px 9px; border-radius: 999px; cursor: pointer; }
-.chipbtn:hover { border-color: var(--accent); }
+.chips button, .chipbtn { border: 1px solid var(--line); background: transparent; color: var(--fg); font: 400 12.5px var(--ff); padding: 5px 10px; border-radius: 0; cursor: pointer; font-variant-numeric: tabular-nums; }
+.chipbtn:hover, .chips button:hover { border-color: var(--faint); }
 .chips button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .cong { font-size: 12.5px; color: var(--muted); }
-.congtrack { height: 5px; border-radius: 3px; background: var(--chip); overflow: hidden; }
+.congtrack { height: 3px; border-radius: 2px; background: var(--chip); overflow: hidden; }
 #congbar { height: 100%; width: 100%; background: linear-gradient(90deg, var(--i5), var(--i20) 50%, var(--i30)); transform-origin: left; transform: scaleX(0); transition: transform .2s; will-change: transform; }
-.pt { display: grid; grid-template-columns: 22px 1fr; gap: 6px 8px; align-items: center; }
-.pin { width: 22px; height: 22px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: grid; place-items: center; }
-.pin b { transform: rotate(45deg); color: #fff; font-size: 11px; }
+.pt { display: grid; grid-template-columns: 22px 1fr; gap: 8px 10px; align-items: center; }
+.pin { width: 20px; height: 20px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: grid; place-items: center; }
+.pin b { transform: rotate(45deg); color: #fff; font-size: 10.5px; }
 .pin.a { background: var(--mark-a); } .pin.b { background: var(--mark-b); }
-.pt input { width: 100%; min-width: 0; font: 500 13.5px var(--ff-ui); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; }
+.pt input, .txt { width: 100%; min-width: 0; font: 400 13.5px var(--ff); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 0; padding: 8px 10px; }
+.pt input:focus, .txt:focus { border-color: var(--faint); outline: none; }
 .hint { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.linkbtn { border: 0; background: none; color: var(--accent); font: 600 12.5px var(--ff-ui); cursor: pointer; padding: 2px 0; }
+.linkbtn { border: 0; background: none; color: var(--fg); font: 500 12.5px var(--ff); cursor: pointer; padding: 2px 0; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.linkbtn:hover { text-decoration-color: var(--fg); }
 .res { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.card { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; min-width: 0; }
+.card { border: 1px solid var(--line); border-radius: 0; padding: 10px 12px; min-width: 0; }
 .card .k { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-.card .k i { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
-.card .big { font-family: var(--ff-num); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; margin: 2px 0 1px; }
+.card .k i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.card .big { font-size: 24px; font-weight: 300; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin: 2px 0 1px; }
 .card .sub { font-size: 12px; color: var(--muted); }
 #legs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; }
 #legs li { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: baseline; }
 #legs .lg { color: var(--muted); font-size: 11.5px; }
-#legs .ln { font: 600 11.5px var(--ff-num); background: var(--bus); color: #fff; border-radius: 4px; padding: 1px 6px; min-width: 30px; text-align: center; }
+#legs .ln { font: 600 11.5px var(--ff); background: var(--bus); color: #fff; border-radius: 4px; padding: 1px 6px; min-width: 30px; text-align: center; font-variant-numeric: tabular-nums; }
 #legs .ln.tr { background: var(--trolley); }
-.profile { border: 1px solid var(--line); border-radius: 10px; padding: 8px 8px 6px; }
+.profile { border: 1px solid var(--line); border-radius: 0; padding: 10px 8px 6px; }
 .profile .ph { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 0 4px; flex-wrap: wrap; }
-.profile .ph b { font-size: 12.5px; }
+.profile .ph b { font-size: 12.5px; font-weight: 600; }
 .lgd { display: flex; gap: 10px; font-size: 11.5px; color: var(--muted); }
 .lgd i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
 svg#prof { width: 100%; height: auto; display: block; }
 svg#prof .g { stroke: var(--line); stroke-width: 1; }
-svg#prof .ax { fill: var(--muted); font: 500 9.5px var(--ff-num); }
-svg#prof .lcar { fill: none; stroke: var(--car); stroke-width: 2.2; }
-svg#prof .lpt { fill: none; stroke: var(--pt); stroke-width: 2; stroke-dasharray: 1 0; opacity: .85; }
+svg#prof .ax { fill: var(--faint); font: 500 9.5px var(--ff); }
+svg#prof .lcar { fill: none; stroke: var(--car); stroke-width: 2; }
+svg#prof .lpt { fill: none; stroke: var(--pt); stroke-width: 1.8; opacity: .85; }
 svg#prof .mk { stroke: var(--fg); stroke-width: 1; stroke-dasharray: 3 3; }
 svg#prof .dcar { fill: var(--car); stroke: var(--panel); stroke-width: 1.5; }
 svg#prof .dpt { fill: var(--pt); stroke: var(--panel); stroke-width: 1.5; }
 svg#prof #phit { cursor: crosshair; }
 #profnote { font-size: 12px; color: var(--muted); padding: 2px 4px 0; }
-.btn { border: 0; background: var(--accent); color: var(--accent-ink); font: 600 13px var(--ff-ui); padding: 8px 12px; border-radius: 8px; cursor: pointer; }
-.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
-.switch { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
-.switch input { accent-color: var(--accent); width: 16px; height: 16px; }
+.btn { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); font: 400 12.5px var(--ff); letter-spacing: .3px; padding: 9px 16px; border-radius: 0; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--faint); }
+.btn.sm { padding: 5px 10px; font-size: 12.5px; }
+.switch { display: flex; align-items: center; gap: 9px; font-size: 13px; cursor: pointer; }
+.switch input { accent-color: var(--accent); width: 15px; height: 15px; margin: 0; }
 #isobody.off { opacity: .45; pointer-events: none; }
-.legend { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
-.legend div { font: 600 11px var(--ff-num); text-align: center; padding: 4px 0; border-radius: 4px; color: #142019; }
+.legend { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; }
+.legend div { font: 600 11px var(--ff); text-align: center; padding: 4px 0; border-radius: 3px; color: #142019; font-variant-numeric: tabular-nums; }
 .legend + .ll { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
 .tblwrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
 th, td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-thead th { font-size: 10.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
-td { font-family: var(--ff-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+thead th { font-size: 10.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+td { font-variant-numeric: tabular-nums; white-space: nowrap; }
 td .vc, td .vp { display: block; }
 td .vc::before { content: ""; display: inline-block; width: 8px; height: 3px; background: var(--car); margin-right: 4px; vertical-align: middle; }
 td .vp::before { content: ""; display: inline-block; width: 8px; height: 3px; background: var(--pt); margin-right: 4px; vertical-align: middle; }
-th .lbl { font: 600 12.5px var(--ff-ui); color: var(--fg); background: transparent; border: 0; border-bottom: 1px dashed var(--line); padding: 1px 0; width: 100%; min-width: 90px; }
+th .lbl { font: 600 12.5px var(--ff); color: var(--fg); background: transparent; border: 0; border-bottom: 1px dashed var(--line); padding: 1px 0; width: 100%; min-width: 90px; }
 th .od { font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 2px; }
-.ic { border: 1px solid var(--line); background: transparent; color: var(--fg); font: 500 11.5px var(--ff-ui); border-radius: 6px; padding: 2px 6px; cursor: pointer; margin-right: 3px; }
+.ic { border: 1px solid var(--line); background: transparent; color: var(--fg); font: 500 11.5px var(--ff); border-radius: 5px; padding: 2px 7px; cursor: pointer; margin-right: 3px; }
 .ic.del { color: var(--mark-b); }
 #cmpempty { font-size: 12.5px; color: var(--muted); margin: 0; }
-details { border-top: 1px solid var(--line); padding-top: 12px; font-size: 12.5px; color: var(--muted); }
-details summary { cursor: pointer; color: var(--fg); font-weight: 600; font-size: 13px; }
-details p, details ul { margin: 8px 0 0; } details ul { padding-left: 18px; } details li { margin-bottom: 4px; }
-details a { color: var(--accent); }
+.notes { font-size: 12.5px; color: var(--muted); }
+.notes p, .notes ul { margin: 0 0 8px; } .notes ul { padding-left: 18px; } .notes li { margin-bottom: 4px; }
+.notes a { color: var(--fg); }
+details.mini { font-size: 12.5px; color: var(--muted); }
+details.mini summary { cursor: pointer; color: var(--fg); font-weight: 500; font-size: 12.5px; }
+details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.tipnote { font-size: 12px; color: var(--muted); margin: 0; }
+
+/* my objects */
+.mine { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.mine li { display: grid; grid-template-columns: 10px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.mine .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pin); }
+.mine .dot.s { background: var(--edu); border-radius: 2px; } .mine .dot.k { background: var(--kg); }
+.mine input { border: 0; background: transparent; font: 500 13px var(--ff); color: var(--fg); padding: 2px 0; width: 100%; min-width: 0; text-overflow: ellipsis; }
+.mine input:focus { outline: none; border-bottom: 1px solid var(--faint); }
+.mine .acts { display: flex; gap: 2px; }
+.mine .acts button { border: 0; background: none; color: var(--muted); font: 500 11.5px var(--ff); padding: 3px 6px; border-radius: 4px; cursor: pointer; }
+.mine .acts button:hover { background: var(--hover); color: var(--fg); }
+.mine .acts .x { font-size: 15px; line-height: 1; }
+.mine .t { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* layers */
+.layers { display: flex; flex-direction: column; gap: 2px; }
+.lrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 30px; }
+.lrow .switch { min-width: 0; }
+.cnt { color: var(--faint); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.solo { flex: none; border: 0; background: transparent; color: var(--faint); font: 500 11.5px var(--ff); border-radius: 4px; padding: 2px 6px; cursor: pointer; opacity: 0; }
+.lrow:hover .solo, .solo:focus-visible { opacity: 1; }
+@media (hover: none) { .solo { opacity: 1; } }
+.solo:hover { color: var(--fg); background: var(--hover); }
+.sw { display: inline-block; width: 16px; height: 9px; border-radius: 2px; vertical-align: middle; margin-right: 2px; flex: none; }
+.sw.line { height: 3px; border-radius: 2px; }
+.sw.dash { height: 0; border-top: 2px dashed var(--track); background: none !important; }
+.sw.dot { width: 9px; height: 9px; border-radius: 50%; }
+
+/* import */
+.steps { margin: 0; padding-left: 18px; font-size: 13px; color: var(--fg); display: flex; flex-direction: column; gap: 8px; }
+.bm { display: inline-block; background: var(--accent); color: var(--accent-ink); font: 400 12.5px var(--ff); padding: 4px 10px; border-radius: 0; text-decoration: none; cursor: grab; }
+#bmcode { width: 100%; font: 500 11.5px ui-monospace, monospace; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; resize: vertical; }
+#impsec.drop { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 8px; }
+.impsum { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 0; padding: 9px 12px; font-size: 13px; }
+
+/* map overlays */
 .mapui { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); top: 12px; display: flex; flex-direction: column; gap: 6px; }
-.mapui button { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); font: 600 17px var(--ff-ui); cursor: pointer; box-shadow: 0 1px 3px rgb(0 0 0 / .12); }
-.mapui button.txt { font-size: 10px; font-weight: 700; letter-spacing: .03em; width: auto; padding: 0 7px; }
-.pickbar { position: absolute; left: 12px; top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; display: flex; gap: 8px; align-items: center; font-size: 12.5px; box-shadow: 0 1px 3px rgb(0 0 0 / .12); max-width: calc(100% - 80px); flex-wrap: wrap; }
-.pickbar .seg button[aria-pressed="true"][data-pick="A"] { background: var(--mark-a); color: #fff; }
-.pickbar .seg button[aria-pressed="true"][data-pick="B"] { background: var(--mark-b); color: #fff; }
-#tip { position: absolute; left: 0; top: 0; will-change: transform; pointer-events: none; background: var(--fg); color: var(--panel); font: 500 12px var(--ff-ui); padding: 7px 10px; border-radius: 8px; white-space: nowrap; box-shadow: 0 2px 8px rgb(0 0 0 / .25); }
-.th { font-size: 11px; opacity: .75; margin-bottom: 3px; }
+.mapui button { width: 34px; height: 34px; border-radius: 0; border: 1px solid var(--line); background: var(--panel); color: var(--fg); font: 500 17px var(--ff); cursor: pointer; box-shadow: 0 1px 2px rgb(0 0 0 / .08); }
+.mapui button.txt { font-size: 10px; font-weight: 600; letter-spacing: .06em; width: auto; padding: 0 8px; }
+.pickbar { position: absolute; left: 12px; top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 0; padding: 4px; display: flex; gap: 8px; align-items: center; font-size: 12.5px; box-shadow: 0 1px 2px rgb(0 0 0 / .08); max-width: calc(100% - 80px); flex-wrap: wrap; }
+.pickbar > span { padding-left: 6px; color: var(--muted); }
+.pickbar .seg { background: transparent; }
+.pickbar .seg button[aria-pressed="true"][data-pick="A"] { background: var(--mark-a); color: #fff; box-shadow: none; }
+.pickbar .seg button[aria-pressed="true"][data-pick="B"] { background: var(--mark-b); color: #fff; box-shadow: none; }
+.pickbar .seg button[aria-pressed="true"][data-pick="I"], .pickbar .seg button[aria-pressed="true"][data-pick="O"] { background: var(--chip); box-shadow: none; }
+#tip { position: absolute; left: 0; top: 0; will-change: transform; pointer-events: none; background: var(--fg); color: var(--panel); font: 500 12px var(--ff); padding: 7px 10px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 8px rgb(0 0 0 / .2); }
+.th { font-size: 11px; opacity: .7; margin-bottom: 3px; }
 .tl { display: grid; grid-template-columns: 12px 84px auto auto; gap: 6px; align-items: center; }
 .tl i { width: 10px; height: 3px; border-radius: 2px; }
 .tl i.c { background: var(--car); } .tl i.p { background: var(--pt); }
 #tip .tl i.c { background: color-mix(in srgb, var(--car) 55%, var(--panel)); } #tip .tl i.p { background: color-mix(in srgb, var(--pt) 55%, var(--panel)); }
-.tl b { font: 600 13px var(--ff-num); font-variant-numeric: tabular-nums; }
-.tl span { font: 500 11px var(--ff-num); opacity: .7; }
+.tl b { font: 600 13px var(--ff); font-variant-numeric: tabular-nums; }
+.tl span { font: 500 11px var(--ff); opacity: .65; font-variant-numeric: tabular-nums; }
 #card .tl { grid-template-columns: 12px minmax(108px, 1fr) auto 34px; }
-.tl2 { font-size: 12.5px; } .tl2 b { font-family: var(--ff-num); }
-#card { position: absolute; left: 12px; bottom: 30px; z-index: 2; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; box-shadow: 0 2px 8px rgb(0 0 0 / .15); max-width: min(300px, calc(100% - 24px)); max-height: calc(100% - 100px); overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 4px; }
+.tl2 { font-size: 12.5px; } .tl2 b { font-variant-numeric: tabular-nums; }
+#card { position: absolute; left: 12px; bottom: 30px; z-index: 2; background: var(--panel); border: 1px solid var(--line); border-radius: 2px; padding: 12px 14px; box-shadow: 0 4px 16px rgb(0 0 0 / .1); max-width: min(310px, calc(100% - 24px)); max-height: calc(100% - 100px); overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 5px; }
 #card .ch { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
-#card .ch b { font-size: 13px; }
-#card .price { font: 600 18px var(--ff-num); }
-#card .price span { font-size: 12px; color: var(--muted); font-weight: 500; }
+#card .ch b { font-size: 13.5px; font-weight: 600; }
+#card .ttl { font-size: 12.5px; color: var(--muted); }
+#card .sch { font-size: 12px; font-weight: 600; margin-top: 4px; }
+#card .price { font-size: 21px; font-weight: 400; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+#card .price span { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0; }
 #card .facts { font-size: 12.5px; color: var(--muted); }
-#card .cb { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 2px; }
-#card a.linkbtn { text-decoration: none; }
+#card .cb { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
+#card a.linkbtn { text-decoration: underline; }
 #card .x { border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
 .inp { position: relative; min-width: 0; }
-.inp .clr { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); border: 0; background: var(--chip); color: var(--muted); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 15px; line-height: 1; }
+.inp .clr { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); border: 0; background: var(--chip); color: var(--muted); width: 20px; height: 20px; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1; }
 .inp input { padding-right: 30px !important; }
-#routebody.off { opacity: .45; pointer-events: none; }
-.origin { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
-.origin .on { font-weight: 600; font-size: 13px; overflow-wrap: anywhere; }
-.oring { width: 18px; height: 18px; border-radius: 50%; border: 3.5px solid var(--mark-o); flex: none; position: relative; background: var(--panel); }
+.origin { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 0; padding: 9px 12px; }
+.origin .on { font-weight: 500; font-size: 13px; overflow-wrap: anywhere; }
+.oring { width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--mark-o); flex: none; position: relative; background: var(--panel); }
 .oring::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--mark-o); }
-.tipnote { font-size: 12px; color: var(--muted); margin: 0; }
-#loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--land); color: var(--muted); font-size: 14px; }
+#loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--land); color: var(--muted); font-size: 14px; padding: 20px; text-align: center; }
 .attr { position: absolute; right: 8px; bottom: 6px; font-size: 10.5px; color: var(--muted); background: color-mix(in srgb, var(--panel) 80%, transparent); padding: 2px 6px; border-radius: 4px; }
-#exnote { font-size: 12px; color: var(--muted); margin: -4px 0 0; }
+#busy { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); background: var(--fg); color: var(--panel); font: 500 12px var(--ff); padding: 6px 12px; border-radius: 999px; pointer-events: none; }
 #panelbtn, .panelhide { display: none; }
 /* Phones: the map fills the screen; the panel is a sheet over it that can be hidden. */
 @media (max-width: 820px) {
@@ -206,145 +250,169 @@ details a { color: var(--accent); }
   .app { display: block; position: relative; height: 100vh; height: 100dvh; }
   .mapwrap { position: absolute; inset: 0; }
   .panel { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; max-height: 75vh; max-height: 75dvh; overflow-y: auto; overscroll-behavior: contain;
-    border-right: 0; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; box-shadow: 0 -6px 24px rgb(0 0 0 / .2);
-    padding-top: 0; padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)); transition: transform .25s ease; }
+    border-right: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -6px 24px rgb(0 0 0 / .15);
+    padding-top: 0; padding-right: max(18px, env(safe-area-inset-right, 0px)); padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)); transition: transform .25s ease; }
   body.panel-off .panel { transform: translateY(105%); visibility: hidden; transition: transform .25s ease, visibility 0s .25s; }
-  .panelhide { display: flex; position: sticky; top: 0; z-index: 2; background: var(--panel); justify-content: center; padding: 8px 0 4px; margin: 0 -16px; }
-  .panelhide button { border: 1px solid var(--line); background: var(--chip); color: var(--fg); font: 600 13px var(--ff-ui); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
-  #panelbtn { display: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 18px)); z-index: 3; border: 0; background: var(--accent); color: var(--accent-ink); font: 600 14px var(--ff-ui); border-radius: 999px; padding: 11px 18px; box-shadow: 0 3px 12px rgb(0 0 0 / .3); cursor: pointer; white-space: nowrap; }
+  .panelhide { display: flex; position: sticky; top: 0; z-index: 2; background: var(--panel); justify-content: center; padding: 8px 0 6px; margin: 0 -18px; }
+  .panelhide button { border: 0; background: var(--chip); color: var(--fg); font: 500 13px var(--ff); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+  header { padding-top: 6px; }
+  #panelbtn { display: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 18px)); z-index: 3; border: 0; background: var(--accent); color: var(--accent-ink); font: 400 13px var(--ff); letter-spacing: 2px; text-transform: uppercase; border-radius: 0; padding: 11px 20px; box-shadow: 0 3px 12px rgb(0 0 0 / .25); cursor: pointer; white-space: nowrap; }
   body.panel-off #panelbtn { display: block; }
-  #card { top: 64px; bottom: auto; max-height: calc(100% - 150px); }
-  .pickbar { max-width: calc(100% - 70px); padding: 4px; }
+  #card { top: 60px; bottom: auto; max-height: calc(100% - 150px); }
+  .pickbar { max-width: calc(100% - 70px); }
   .pickbar > span { display: none; }
+  .solo { opacity: 1; }
 }
-@media (prefers-reduced-motion: reduce) { .panel { transition: none !important; } }
-@media (prefers-reduced-motion: reduce) { #congbar { transition: none; } }
-.sw { display: inline-block; width: 18px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 2px; flex: none; }
-.sw.line { height: 3px; border-radius: 2px; }
-.sw.dash { height: 0; border-top: 2px dashed var(--track); background: none !important; }
-.sw.dot { width: 10px; height: 10px; border-radius: 50%; }
-.layers { display: flex; flex-direction: column; gap: 7px; }
-.qbtns { display: flex; gap: 6px; flex-wrap: wrap; }
-#busy { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); background: var(--fg); color: var(--panel); font: 600 12px var(--ff-ui); padding: 6px 12px; border-radius: 999px; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .panel, #congbar { transition: none !important; } }
 </style>
 
 <div class="app">
   <aside class="panel" id="panel">
-    <div class="panelhide"><button id="panelhide">Slėpti ir rodyti žemėlapį</button></div>
+    <div class="panelhide"><button id="panelhide">Rodyti žemėlapį</button></div>
     <header>
+      <div class="eyebrow">Kaunas ir Kauno rajonas</div>
       <h1>Kur gyventi Kaune</h1>
-      <p>Darželiai, mokyklos, dviračių takai ir kelionės laikas Kaune ir Kauno rajone. Įsikelk skelbimus iš aruodo ir pamatyk, kas aplink.</p>
+      <p>Kelionės laikas pagal paros metą, darželiai, mokyklos, gamta ir tavo skelbimai.</p>
     </header>
 
-    <section aria-labelledby="h-lay">
-      <div class="row" style="justify-content:space-between"><h2 id="h-lay">Sluoksniai</h2><div class="row" style="gap:12px"><button class="linkbtn" id="layall">Visi</button><button class="linkbtn" id="laynone">Nė vieno</button></div></div>
-      <div class="layers" id="layers"></div>
-      <p class="tipnote">„Tik šis“ palieka vieną sluoksnį, kitus išjungia. Gatvės, vandenys ir gyvenviečių pavadinimai rodomi visada.</p>
-    </section>
-
-    <section aria-labelledby="h-imp" id="impsec">
-      <h2 id="h-imp">Skelbimai iš aruodo</h2>
-      <ol class="steps">
-        <li>Vieną kartą nutempk šį mygtuką į naršyklės žymių juostą: <a class="bm" id="bmlink" href="#">Į žemėlapį</a></li>
-        <li>Įklijuok čia savo paieškos nuorodą iš aruodas.lt ar skelbiu.lt:<input id="impurl" type="url" inputmode="url" placeholder="https://www.aruodas.lt/..." autocomplete="off" aria-label="Paieškos nuoroda"></li>
-        <li>Atsidariusiame aruode spausk žymę „Į žemėlapį“. Skelbimai atsiras čia.</li>
-      </ol>
-      <p class="tipnote" id="impmsg" aria-live="polite"></p>
-      <div class="row"><button class="linkbtn" id="impclear" hidden>Pašalinti skelbimus</button></div>
-      <details class="mini">
-        <summary>Kitaip (failas, telefonas)</summary>
-        <p>Veikia kompiuterio naršyklėje. Telefone: kompiuteryje žymės lange spausk „Atsisiųsti failą“, o telefone įkelk jį čia.</p>
-        <div class="row"><button class="btn ghost" id="impfile">Įkelti failą</button><input type="file" id="impinput" multiple accept=".html,.htm,.csv,.json,.txt" hidden></div>
-        <p>Tinka žymės failas, išsaugotas paieškos puslapis (.html) arba CSV su adresų stulpeliu.</p>
-        <p>Jei mygtuko nepavyksta nutempti, sukurk žymę ir į jos adresą įklijuok šį kodą:</p>
-        <textarea id="bmcode" rows="2" readonly aria-label="Žymės kodas"></textarea>
-        <button class="linkbtn" id="bmcopy">Kopijuoti kodą</button>
-      </details>
-    </section>
-
-    <section aria-labelledby="h-time">
-      <h2 id="h-time">Kada važiuoji</h2>
-      <div class="seg" role="group" aria-label="Savaitės diena">
-        <button data-day="wd">Darbo diena</button><button data-day="sa">Šeštadienis</button><button data-day="su">Sekmadienis</button>
-      </div>
-      <div class="clock"><div class="big" id="tval">07:45</div><span>išvykimas, <span id="dayname">Darbo diena</span></span></div>
-      <input type="range" id="tslider" min="0" max="1425" step="15" value="465" aria-label="Išvykimo laikas">
-      <div class="ticks"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
-      <div class="chips">
-        <button data-t="420">07:00</button><button data-t="465">07:45</button><button data-t="510">08:30</button><button data-t="720">12:00</button><button data-t="1035">17:15</button><button data-t="1260">21:00</button>
-      </div>
-      <div class="congtrack"><div id="congbar"></div></div>
-      <div class="cong" id="cong"></div>
-    </section>
-
-    <section aria-labelledby="h-route">
-      <div class="row" style="justify-content:space-between"><h2 id="h-route">Maršrutas A → B</h2><label class="switch"><input type="checkbox" id="routeon" checked>Rodyti</label></div>
-      <div id="routebody" style="display:flex;flex-direction:column;gap:10px">
-      <datalist id="places"></datalist>
-      <div class="pt">
-        <span class="pin a"><b>A</b></span><div class="inp"><input id="inA" list="places" placeholder="Iš kur: gatvė, gyvenvietė ar stotelė" autocomplete="off"><button class="clr" id="clrA" hidden aria-label="Pašalinti tašką A">×</button></div>
-        <span class="pin b"><b>B</b></span><div class="inp"><input id="inB" list="places" placeholder="Į kur" autocomplete="off"><button class="clr" id="clrB" hidden aria-label="Pašalinti tašką B">×</button></div>
-      </div>
-      <div><div class="tipnote" style="margin-bottom:5px">Pasirinkti objektai (spausk, kad būtų taškas B):</div><div class="pinned" id="pinned"></div></div>
-      <div class="hint">Arba žemėlapio juostoje pasirink A ar B ir spustelėk žemėlapį. Taškus galima tempti. <button class="linkbtn" id="swap">Sukeisti A ir B</button></div>
-      <div class="res">
-        <div class="card" id="rcar"><div class="k"><i style="background:var(--car)"></i>Automobiliu</div><div class="big">-</div><div class="sub"></div></div>
-        <div class="card" id="rpt"><div class="k"><i style="background:var(--pt)"></i>Viešuoju transportu</div><div class="big">-</div><div class="sub"></div></div>
-      </div>
-      <ul id="legs"></ul>
-      <div class="profile" id="profwrap" hidden>
-        <div class="ph"><b>Visa diena (spausk grafiką laikui pakeisti)</b><span class="lgd"><span><i style="background:var(--car)"></i>auto</span><span><i style="background:var(--pt)"></i>VT</span></span></div>
-        <svg id="prof" viewBox="0 0 340 150" role="img" aria-label="Kelionės trukmė minutėmis pagal išvykimo laiką"></svg>
-        <div id="profnote"></div>
-      </div>
-      <div class="row"><button class="btn" id="save">Įrašyti palyginimui</button></div>
-      </div>
-    </section>
-
-    <section aria-labelledby="h-iso">
-      <div class="row" style="justify-content:space-between"><h2 id="h-iso">Laiko zonos žemėlapyje</h2><label class="switch"><input type="checkbox" id="isoon" checked>Rodyti</label></div>
-      <div id="isobody" style="display:flex;flex-direction:column;gap:10px">
-        <div class="row"><span style="font-size:12.5px;color:var(--muted);width:44px">Kuo</span><div class="seg"><button data-imode="car" aria-pressed="true">Automobiliu</button><button data-imode="pt">Viešuoju tr.</button></div></div>
-        <div class="row"><span style="font-size:12.5px;color:var(--muted);width:44px">Nuo</span><div class="seg"><button data-iorig="O" aria-pressed="true">Centro taško</button><button data-iorig="A">Taško A</button><button data-iorig="B">Taško B</button></div></div>
-        <div class="origin"><span class="oring"></span><div style="min-width:0"><div class="on" id="oname">Kauno centras (Laisvės al.)</div><div class="row" style="gap:12px"><button class="linkbtn" id="oset">Pasirinkti žemėlapyje</button><button class="linkbtn" id="oreset" hidden>Grąžinti Kauno centrą</button></div></div></div>
-        <div class="tipnote">Centro tašką gali ir tiesiog nutempti žemėlapyje. Tavo centras išsaugomas šioje naršyklėje.</div>
-        <div class="legend">
-          <div style="background:var(--i5);color:#fff">5</div><div style="background:var(--i10);color:#fff">10</div><div style="background:var(--i15)">15</div><div style="background:var(--i20)">20</div><div style="background:var(--i25)">25</div><div style="background:var(--i30)">30</div>
+    <details class="sec" id="sec-time" open>
+      <summary><h2>Kada važiuoji</h2><span class="sx" id="sx-time"></span></summary>
+      <div class="secb">
+        <div class="seg" role="group" aria-label="Savaitės diena">
+          <button data-day="wd">Darbo diena</button><button data-day="sa">Šeštadienis</button><button data-day="su">Sekmadienis</button>
         </div>
-        <div class="ll"><span>minutės iki</span><span>vesk pelę per žemėlapį: laikas rodomas šalia</span></div>
+        <div class="clock"><div class="big" id="tval">07:45</div><span>išvykimas, <span id="dayname">Darbo diena</span></span></div>
+        <input type="range" id="tslider" min="0" max="1425" step="15" value="465" aria-label="Išvykimo laikas">
+        <div class="ticks"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+        <div class="chips">
+          <button data-t="420">07:00</button><button data-t="465">07:45</button><button data-t="510">08:30</button><button data-t="720">12:00</button><button data-t="1035">17:15</button><button data-t="1260">21:00</button>
+        </div>
+        <div class="congtrack"><div id="congbar"></div></div>
+        <div class="cong" id="cong"></div>
       </div>
-    </section>
+    </details>
 
-    <section aria-labelledby="h-cmp">
-      <h2 id="h-cmp">Palyginimas (darbo diena, minutės)</h2>
-      <p id="cmpempty">Įrašyk kelis maršrutus, pvz. iš kelių vietų iki darbo, ir čia matysi jų laikus ryte, dieną ir vakare. Sąrašas lieka tik šioje naršyklėje.</p>
-      <div class="tblwrap"><table id="cmptable" hidden>
-        <thead><tr><th>Maršrutas</th><th>07:45</th><th>12:00</th><th>17:15</th><th></th></tr></thead>
-        <tbody id="cmpbody"></tbody>
-      </table></div>
-    </section>
+    <details class="sec" id="sec-iso" open>
+      <summary><h2>Laiko zonos</h2><span class="sx" id="sx-iso"></span></summary>
+      <div class="secb">
+        <label class="switch"><input type="checkbox" id="isoon" checked>Rodyti zonas žemėlapyje</label>
+        <div id="isobody" style="display:flex;flex-direction:column;gap:10px">
+          <div class="row"><span style="font-size:12.5px;color:var(--muted);width:40px">Kuo</span><div class="seg"><button data-imode="car" aria-pressed="true">Automobiliu</button><button data-imode="pt">Viešuoju tr.</button></div></div>
+          <div class="row"><span style="font-size:12.5px;color:var(--muted);width:40px">Nuo</span><div class="seg"><button data-iorig="O" aria-pressed="true">Centro</button><button data-iorig="A">Taško A</button><button data-iorig="B">Taško B</button></div></div>
+          <div class="origin"><span class="oring"></span><div style="min-width:0"><div class="on" id="oname">Kauno centras (Laisvės al.)</div><div class="row" style="gap:12px"><button class="linkbtn" id="oset">Pasirinkti žemėlapyje</button><button class="linkbtn" id="oreset" hidden>Grąžinti Kauno centrą</button></div></div></div>
+          <div class="legend">
+            <div style="background:var(--i5);color:#fff">5</div><div style="background:var(--i10);color:#fff">10</div><div style="background:var(--i15)">15</div><div style="background:var(--i20)">20</div><div style="background:var(--i25)">25</div><div style="background:var(--i30)">30</div>
+          </div>
+          <div class="ll"><span>minutės iki</span><span>centrą galima tempti žemėlapyje</span></div>
+        </div>
+      </div>
+    </details>
 
-    <section aria-labelledby="h-exp">
-      <h2 id="h-exp">Eksportas</h2>
-      <div class="row" id="expbtns"><button class="btn ghost" id="exppng">Žemėlapis PNG</button><button class="btn ghost" id="expcsv">Lentelė CSV</button><button class="btn ghost" id="expgeo">Zonos GeoJSON</button><button class="btn ghost" id="explst" hidden>Skelbimai CSV</button></div>
-            <p class="tipnote">PNG: dabartinis žemėlapio vaizdas su legenda. CSV: palyginimo lentelė arba įkelti skelbimai su laikais iki pasirinktų objektų (atsidaro Excel). GeoJSON: laiko zonų ribos, tinka Google Earth, QGIS ar kitam žemėlapiui.</p>
-      <p class="tipnote" id="expmsg" aria-live="polite"></p>
-    </section>
+    <details class="sec" id="sec-mine" open>
+      <summary><h2>Mano objektai</h2><span class="sx" id="sx-mine"></span></summary>
+      <div class="secb">
+        <ul class="mine" id="mine"></ul>
+        <p class="tipnote" id="mineempty">Spustelėk darželį, mokyklą ar bet kurią vietą žemėlapyje (pvz. darbą) ir pasirink „Į mano objektus“. Tada skelbimų ir taškų kortelėse matysi kelionės laiką iki jų pasirinktu metu.</p>
+      </div>
+    </details>
 
-    <details>
-      <summary>Kaip skaičiuojama ir kiek tuo tikėti</summary>
-      <p><b>Automobilis.</b> Maršrutas ieškomas OpenStreetMap kelių tinkle (Geofabrik, 2026-11-03 duomenys). Laisvo eismo greitis pagal kelio klasę ir leistiną greitį, mieste sumažintas dėl sankryžų ir šviesoforų. Kamščiai pridedami pagal paros laiką: kreivė pritaikyta prie TomTom Traffic Index 2025 Kaunui (rytinis piko laikas vidutiniškai +71 %, vakarinis +82 %, naktį beveik laisva). Kamščiai labiausiai veikia miesto magistrales, mažiau gyvenamąsias gatves, o užmiesčio keliuose tik įvažiavimus į miestą.</p>
-      <p><b>Viešasis transportas.</b> Tikras Kauno viešojo transporto (KVT) GTFS tvarkaraštis, galiojantis nuo 2026-10-24 (darbo diena, šeštadienis, sekmadienis). Laikas skaičiuojamas nuo išvykimo iš taško A: ėjimas iki stotelės, laukimas, važiavimas, persėdimai (bent 2 min) ir ėjimas iki B. Ėjimas iki 1,2 km tiesia linija.</p>
-      <ul>
-        <li>Tai modelis, ne gyvas eismas: avarijos, remontai ir oras nerodomi. Piko metu realus laikas gali skirtis maždaug ±20 %.</li>
-        <li>A1 magistralėje greitis kintamas (130 km/h sausu keliu, 110 ar mažiau blogomis sąlygomis), modelyje apie 110 km/h.</li>
-        <li>Tvarkaraštyje yra tik miesto (KVT) maršrutai, įskaitant priemiesčius kaip Garliava, Domeikava, Raudondvaris, Ringaudai, Vaišvydava. Privačių priemiestinių autobusų iš autobusų stoties nėra, todėl dalyje rajono VT laikas rodomas per ilgas arba jo nėra.</li>
-        <li>Taško laikas skaičiuojamas nuo artimiausio kelio, todėl laukuose ir miškuose zonos turi skylių.</li>
-        <li>Įkeltų skelbimų vieta nustatoma pagal gatvę, o jei gatvės nėra, pagal gyvenvietę, todėl taškas gali būti nutolęs keliais šimtais metrų. Skelbimai už Kauno ir Kauno r. ribų žemėlapyje nerodomi.</li>
-        <li>Visos mokyklos ir darželiai, pažymėti OpenStreetMap (valstybiniai ir privatūs). Jei kurio trūksta, spustelėk žemėlapyje tą vietą ir naudok ją kaip tašką B.</li>
-        <li>Miškai, parkai, dviračių takai ir keliukai iš OpenStreetMap.</li>
-      </ul>
-      <p>Šaltiniai: <a href="https://download.geofabrik.de/europe/lithuania.html" target="_blank" rel="noopener">OpenStreetMap / Geofabrik</a>, <a href="https://mobilitydatabase.org/feeds/gtfs/mdb-1041" target="_blank" rel="noopener">KVT GTFS (Mobility Database)</a>, <a href="https://www.tomtom.com/traffic-index/kaunas-traffic" target="_blank" rel="noopener">TomTom Traffic Index: Kaunas</a>.</p>
+    <details class="sec" id="sec-route">
+      <summary><h2>Maršrutas A → B</h2><span class="sx" id="sx-route"></span></summary>
+      <div class="secb">
+        <label class="switch"><input type="checkbox" id="routeon" checked>Rodyti maršrutą žemėlapyje</label>
+        <div id="routebody" style="display:flex;flex-direction:column;gap:12px">
+          <datalist id="places"></datalist>
+          <div class="pt">
+            <span class="pin a"><b>A</b></span><div class="inp"><input id="inA" list="places" placeholder="Iš kur: gatvė, gyvenvietė ar stotelė" autocomplete="off"><button class="clr" id="clrA" hidden aria-label="Pašalinti tašką A">×</button></div>
+            <span class="pin b"><b>B</b></span><div class="inp"><input id="inB" list="places" placeholder="Į kur" autocomplete="off"><button class="clr" id="clrB" hidden aria-label="Pašalinti tašką B">×</button></div>
+          </div>
+          <div class="hint">Arba žemėlapio juostoje pasirink A ar B ir spustelėk žemėlapį. Taškus galima tempti. <button class="linkbtn" id="swap">Sukeisti A ir B</button></div>
+          <div class="res">
+            <div class="card" id="rcar"><div class="k"><i style="background:var(--car)"></i>Automobiliu</div><div class="big">-</div><div class="sub"></div></div>
+            <div class="card" id="rpt"><div class="k"><i style="background:var(--pt)"></i>Viešuoju transportu</div><div class="big">-</div><div class="sub"></div></div>
+          </div>
+          <ul id="legs"></ul>
+          <div class="profile" id="profwrap" hidden>
+            <div class="ph"><b>Visa diena (spausk grafiką laikui pakeisti)</b><span class="lgd"><span><i style="background:var(--car)"></i>auto</span><span><i style="background:var(--pt)"></i>VT</span></span></div>
+            <svg id="prof" viewBox="0 0 340 150" role="img" aria-label="Kelionės trukmė minutėmis pagal išvykimo laiką"></svg>
+            <div id="profnote"></div>
+          </div>
+          <div class="row"><button class="btn ghost sm" id="save">Įrašyti palyginimui</button></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-imp">
+      <summary><h2>Skelbimai</h2><span class="sx" id="sx-imp"></span></summary>
+      <div class="secb" id="impsec">
+        <div class="impsum" id="impsum" hidden><span id="impsumtxt"></span><span class="row" style="gap:12px;flex-wrap:nowrap"><button class="linkbtn" id="imprefresh" hidden>Atnaujinti</button><button class="linkbtn" id="impclear">Pašalinti</button></span></div>
+        <div id="impurlbox">
+          <label for="impurl" style="font-size:13px">Įklijuok paieškos nuorodą iš skelbiu.lt arba aruodas.lt</label>
+          <div class="row" style="margin-top:6px;flex-wrap:nowrap"><input id="impurl" class="txt" type="url" inputmode="url" placeholder="https://www.skelbiu.lt/skelbimai/..." autocomplete="off" aria-label="Paieškos nuoroda"><button class="btn sm" id="impgo">Įkelti</button></div>
+        </div>
+        <p class="tipnote" id="impmsg" aria-live="polite"></p>
+        <details class="mini" id="impsteps">
+          <summary id="impstepsum">Kaip įkelti kompiuteryje (žymė)</summary>
+          <div>
+            <ol class="steps">
+              <li>Vieną kartą nutempk šį mygtuką į naršyklės žymių juostą: <a class="bm" id="bmlink" href="#">Į žemėlapį</a></li>
+              <li>Atsidaryk savo paiešką aruodas.lt ar skelbiu.lt (arba įklijuok nuorodą aukščiau).</li>
+              <li>Ten spausk žymę „Į žemėlapį“. Skelbimai atsiras čia.</li>
+            </ol>
+            <p>Jei mygtuko nepavyksta nutempti, sukurk žymę ir į jos adresą įklijuok šį kodą:</p>
+            <textarea id="bmcode" rows="2" readonly aria-label="Žymės kodas"></textarea>
+            <div><button class="linkbtn" id="bmcopy">Kopijuoti kodą</button></div>
+            <p>Arba įkelk failą: žymės išsaugotą failą, išsaugotą paieškos puslapį (.html) ar CSV su adresų stulpeliu.</p>
+            <div class="row"><button class="btn ghost sm" id="impfile">Įkelti failą</button><input type="file" id="impinput" multiple accept=".html,.htm,.csv,.json,.txt" hidden></div>
+          </div>
+        </details>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-lay">
+      <summary><h2>Sluoksniai</h2><span class="sx" id="sx-lay"></span></summary>
+      <div class="secb">
+        <div class="row" style="gap:14px"><button class="linkbtn" id="layall">Visi</button><button class="linkbtn" id="laynone">Nė vieno</button></div>
+        <div class="layers" id="layers"></div>
+        <p class="tipnote">„Tik šis“ palieka vieną sluoksnį. Gatvės, vandenys ir pavadinimai rodomi visada.</p>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-cmp">
+      <summary><h2>Palyginimas</h2><span class="sx" id="sx-cmp"></span></summary>
+      <div class="secb">
+        <p id="cmpempty">Įrašyk kelis maršrutus, pvz. iš kelių vietų iki darbo, ir čia matysi jų laikus darbo dieną ryte, dieną ir vakare. Sąrašas lieka tik šioje naršyklėje.</p>
+        <div class="tblwrap"><table id="cmptable" hidden>
+          <thead><tr><th>Maršrutas</th><th>07:45</th><th>12:00</th><th>17:15</th><th></th></tr></thead>
+          <tbody id="cmpbody"></tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-exp">
+      <summary><h2>Eksportas</h2></summary>
+      <div class="secb">
+        <div class="row" id="expbtns"><button class="btn ghost sm" id="exppng">Žemėlapis PNG</button><button class="btn ghost sm" id="expcsv">Lentelė CSV</button><button class="btn ghost sm" id="expgeo">Zonos GeoJSON</button><button class="btn ghost sm" id="explst" hidden>Skelbimai CSV</button></div>
+        <p class="tipnote">PNG: dabartinis vaizdas su legenda. CSV: palyginimo lentelė arba skelbimai su laikais iki tavo objektų (atsidaro Excel). GeoJSON: zonų ribos Google Earth ar QGIS.</p>
+        <p class="tipnote" id="expmsg" aria-live="polite"></p>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-notes">
+      <summary><h2>Kaip skaičiuojama</h2></summary>
+      <div class="secb notes">
+        <p><b>Automobilis.</b> Maršrutas ieškomas OpenStreetMap kelių tinkle (Geofabrik, 2026-11-03 duomenys). Laisvo eismo greitis pagal kelio klasę ir leistiną greitį, mieste sumažintas dėl sankryžų ir šviesoforų. Kamščiai pridedami pagal paros laiką: kreivė pritaikyta prie TomTom Traffic Index 2025 Kaunui (rytinis piko laikas vidutiniškai +71 %, vakarinis +82 %, naktį beveik laisva).</p>
+        <p><b>Viešasis transportas.</b> Tikras Kauno viešojo transporto (KVT) GTFS tvarkaraštis, galiojantis nuo 2026-10-24. Laikas skaičiuojamas nuo išvykimo: ėjimas iki stotelės, laukimas, važiavimas, persėdimai (bent 2 min) ir ėjimas iki tikslo. Ėjimas iki 1,2 km.</p>
+        <ul>
+          <li>Tai modelis, ne gyvas eismas: avarijos, remontai ir oras nerodomi. Piko metu realus laikas gali skirtis maždaug ±20 %.</li>
+          <li>Tvarkaraštyje yra tik miesto (KVT) maršrutai, įskaitant priemiesčius kaip Garliava, Domeikava, Raudondvaris, Ringaudai, Vaišvydava. Privačių priemiestinių autobusų nėra, todėl dalyje rajono VT laikas per ilgas arba jo nėra.</li>
+          <li>Taško laikas skaičiuojamas nuo artimiausio kelio tame pačiame upės ar ežero krante, todėl laukuose ir miškuose zonos turi skylių.</li>
+          <li>Skelbimų vieta nustatoma pagal gatvę, o jei gatvės nėra, pagal gyvenvietę, todėl taškas gali būti nutolęs keliais šimtais metrų.</li>
+          <li>Mokyklos ir darželiai: OpenStreetMap ir Švietimo, mokslo ir sporto institucijų registras (AIKOS). Registre nurodytas įstaigos adresas, todėl tinklų (pvz. su kitu miestu registruotų) skyriai gali trūkti. Trūkstamą vietą spustelėk žemėlapyje ir pridėk į „Mano objektus“.</li>
+          <li>Miškai, parkai, dviračių takai ir keliukai iš OpenStreetMap.</li>
+        </ul>
+        <p>Šaltiniai: <a href="https://download.geofabrik.de/europe/lithuania.html" target="_blank" rel="noopener">OpenStreetMap / Geofabrik</a>, <a href="https://mobilitydatabase.org/feeds/gtfs/mdb-1041" target="_blank" rel="noopener">KVT GTFS</a>, <a href="https://www.tomtom.com/traffic-index/kaunas-traffic" target="_blank" rel="noopener">TomTom Traffic Index</a>, <a href="https://www.aikos.smm.lt/Registrai/Svietimo-ir-mokslo-institucijos" target="_blank" rel="noopener">AIKOS institucijų registras</a>.</p>
+      </div>
     </details>
   </aside>
 
@@ -352,14 +420,14 @@ details a { color: var(--accent); }
     <div id="map" role="application" aria-label="Kauno ir Kauno rajono žemėlapis"></div>
     <div class="pickbar"><span>Spustelėjus:</span><div class="seg"><button data-pick="I" aria-pressed="true" title="Parodo laiką iki spustelėto taško">Matuoti</button><button data-pick="O" title="Perkelia centro tašką, nuo kurio skaičiuojamos zonos">Centras</button><button data-pick="A">A</button><button data-pick="B">B</button></div></div>
     <div id="card" hidden aria-live="polite"></div>
-    <button id="panelbtn" aria-controls="panel">Sluoksniai ir meniu</button>
+    <button id="panelbtn" aria-controls="panel">Meniu</button>
     <div id="busy" hidden>Skaičiuojami laikai…</div>
     <div class="mapui">
       <button id="zin" aria-label="Priartinti">+</button><button id="zout" aria-label="Nutolinti">−</button>
       <button id="zcity" class="txt" aria-label="Rodyti Kauno miestą">MIESTAS</button><button id="zfit" class="txt" aria-label="Rodyti visą rajoną">RAJ.</button>
     </div>
     <div id="tip" hidden></div>
-    <div class="attr">© OpenStreetMap bendraautoriai · KVT GTFS · MapLibre</div>
+    <div class="attr">© OpenStreetMap bendraautoriai · KVT GTFS · AIKOS · MapLibre</div>
     <div id="loading">Kraunami žemėlapio duomenys…</div>
   </main>
 </div>
@@ -367,12 +435,10 @@ details a { color: var(--accent); }
 <script id="d3array" type="text/plain">
 // https://d3js.org/d3-array/ v3.2.5 Copyright 2010-2026 Mike Bostock
 !function(t,n){"object"==typeof exports&&"undefined"!=typeof module?n(exports):"function"==typeof define&&define.amd?define(["exports"],n):n((t="undefined"!=typeof globalThis?globalThis:t||self).d3=t.d3||{})}(this,function(t){"use strict";function n(t,n){return null==t||null==n?NaN:t<n?-1:t>n?1:t>=n?0:NaN}function r(t,n){return null==t||null==n?NaN:n<t?-1:n>t?1:n>=t?0:NaN}function e(t){let e,f,i;function u(t,n,r=0,o=t.length){if(r<o){if(0!==e(n,n))return o;do{const e=r+o>>>1;f(t[e],n)<0?r=e+1:o=e}while(r<o)}return r}return 2!==t.length?(e=n,f=(r,e)=>n(t(r),e),i=(n,r)=>t(n)-r):(e=t===n||t===r?t:o,f=t,i=t),{left:u,center:function(t,n,r=0,e=t.length){const o=u(t,n,r,e-1);return o>r&&i(t[o-1],n)>-i(t[o],n)?o-1:o},right:function(t,n,r=0,o=t.length){if(r<o){if(0!==e(n,n))return o;do{const e=r+o>>>1;f(t[e],n)<=0?r=e+1:o=e}while(r<o)}return r}}}function o(){return 0}function f(t){return null===t?NaN:+t}const i=e(n),u=i.right,l=i.left,c=e(f).center;const s=h(y),a=h(function(t){const n=y(t);return(t,r,e,o,f)=>{n(t,r,(e<<=2)+0,(o<<=2)+0,f<<=2),n(t,r,e+1,o+1,f),n(t,r,e+2,o+2,f),n(t,r,e+3,o+3,f)}});function h(t){return function(n,r,e=r){if(!((r=+r)>=0))throw new RangeError("invalid rx");if(!((e=+e)>=0))throw new RangeError("invalid ry");let{data:o,width:f,height:i}=n;if(!((f=Math.floor(f))>=0))throw new RangeError("invalid width");if(!((i=Math.floor(void 0!==i?i:o.length/f))>=0))throw new RangeError("invalid height");if(!f||!i||!r&&!e)return n;const u=r&&t(r),l=e&&t(e),c=o.slice();return u&&l?(d(u,c,o,f,i),d(u,o,c,f,i),d(u,c,o,f,i),p(l,o,c,f,i),p(l,c,o,f,i),p(l,o,c,f,i)):u?(d(u,o,c,f,i),d(u,c,o,f,i),d(u,o,c,f,i)):l&&(p(l,o,c,f,i),p(l,c,o,f,i),p(l,o,c,f,i)),n}}function d(t,n,r,e,o){for(let f=0,i=e*o;f<i;)t(n,r,f,f+=e,1)}function p(t,n,r,e,o){for(let f=0,i=e*o;f<e;++f)t(n,r,f,f+i,e)}function y(t){const n=Math.floor(t);if(n===t)return function(t){const n=2*t+1;return(r,e,o,f,i)=>{if(!((f-=i)>=o))return;let u=t*e[o];const l=i*t;for(let t=o,n=o+l;t<n;t+=i)u+=e[Math.min(f,t)];for(let t=o,c=f;t<=c;t+=i)u+=e[Math.min(f,t+l)],r[t]=u/n,u-=e[Math.max(o,t-l)]}}(t);const r=t-n,e=2*t+1;return(t,o,f,i,u)=>{if(!((i-=u)>=f))return;let l=n*o[f];const c=u*n,s=c+u;for(let t=f,n=f+c;t<n;t+=u)l+=o[Math.min(i,t)];for(let n=f,a=i;n<=a;n+=u)l+=o[Math.min(i,n+c)],t[n]=(l+r*(o[Math.max(f,n-s)]+o[Math.min(i,n+s)]))/e,l-=o[Math.max(f,n-c)]}}function m(t,n){let r=0;if(void 0===n)for(let n of t)null!=n&&(n=+n)>=n&&++r;else{let e=-1;for(let o of t)null!=(o=n(o,++e,t))&&(o=+o)>=o&&++r}return r}function g(t){return 0|t.length}function v(t){return!(t>0)}function M(t){return"object"!=typeof t||"length"in t?t:Array.from(t)}function w(t,n){let r,e=0,o=0,f=0;if(void 0===n)for(let n of t)null!=n&&(n=+n)>=n&&(r=n-o,o+=r/++e,f+=r*(n-o));else{let i=-1;for(let u of t)null!=(u=n(u,++i,t))&&(u=+u)>=u&&(r=u-o,o+=r/++e,f+=r*(u-o))}if(e>1)return f/(e-1)}function b(t,n){const r=w(t,n);return r?Math.sqrt(r):r}function A(t,n){let r,e;if(void 0===n)for(const n of t)null!=n&&(void 0===r?n>=n&&(r=e=n):(r>n&&(r=n),e<n&&(e=n)));else{let o=-1;for(let f of t)null!=(f=n(f,++o,t))&&(void 0===r?f>=f&&(r=e=f):(r>f&&(r=f),e<f&&(e=f)))}return[r,e]}class x{constructor(){this._partials=new Float64Array(32),this._n=0}add(t){const n=this._partials;let r=0;for(let e=0;e<this._n&&e<32;e++){const o=n[e],f=t+o,i=Math.abs(t)<Math.abs(o)?t-(f-o):o-(f-t);i&&(n[r++]=i),t=f}return n[r]=t,this._n=r+1,this}valueOf(){const t=this._partials;let n,r,e,o=this._n,f=0;if(o>0){for(f=t[--o];o>0&&(n=f,r=t[--o],f=n+r,e=r-(f-n),!e););o>0&&(e<0&&t[o-1]<0||e>0&&t[o-1]>0)&&(r=2*e,n=f+r,r==n-f&&(f=n))}return f}}class InternMap extends Map{constructor(t,n=S){if(super(),Object.defineProperties(this,{_intern:{value:new Map},_key:{value:n}}),null!=t)for(const[n,r]of t)this.set(n,r)}get(t){return super.get(N(this,t))}has(t){return super.has(N(this,t))}set(t,n){return super.set(E(this,t),n)}delete(t){return super.delete(_(this,t))}}class InternSet extends Set{constructor(t,n=S){if(super(),Object.defineProperties(this,{_intern:{value:new Map},_key:{value:n}}),null!=t)for(const n of t)this.add(n)}has(t){return super.has(N(this,t))}add(t){return super.add(E(this,t))}delete(t){return super.delete(_(this,t))}}function N({_intern:t,_key:n},r){const e=n(r);return t.has(e)?t.get(e):r}function E({_intern:t,_key:n},r){const e=n(r);return t.has(e)?t.get(e):(t.set(e,r),r)}function _({_intern:t,_key:n},r){const e=n(r);return t.has(e)&&(r=t.get(e),t.delete(e)),r}function S(t){return null!==t&&"object"==typeof t?t.valueOf():t}function k(t){return t}function T(t,...n){return O(t,k,k,n)}function F(t,...n){return O(t,Array.from,k,n)}function I(t,n){for(let r=1,e=n.length;r<e;++r)t=t.flatMap(t=>t.pop().map(([n,r])=>[...t,n,r]));return t}function j(t,n,...r){return O(t,k,n,r)}function q(t,n,...r){return O(t,Array.from,n,r)}function R(t){if(1!==t.length)throw new Error("duplicate key");return t[0]}function O(t,n,r,e){return function t(o,f){if(f>=e.length)return r(o);const i=new InternMap,u=e[f++];let l=-1;for(const t of o){const n=u(t,++l,o),r=i.get(n);r?r.push(t):i.set(n,[t])}for(const[n,r]of i)i.set(n,t(r,f));return n(i)}(t,0)}function U(t,n){return Array.from(n,n=>t[n])}function L(t,...n){if("function"!=typeof t[Symbol.iterator])throw new TypeError("values is not iterable");t=Array.from(t);let[r]=n;if(r&&2!==r.length||n.length>1){const e=Uint32Array.from(t,(t,n)=>n);return n.length>1?(n=n.map(n=>t.map(n)),e.sort((t,r)=>{for(const e of n){const n=z(e[t],e[r]);if(n)return n}})):(r=t.map(r),e.sort((t,n)=>z(r[t],r[n]))),U(t,e)}return t.sort(P(r))}function P(t=n){if(t===n)return z;if("function"!=typeof t)throw new TypeError("compare is not a function");return(n,r)=>{const e=t(n,r);return e||0===e?e:(0===t(r,r))-(0===t(n,n))}}function z(t,n){return(null==t||!(t>=t))-(null==n||!(n>=n))||(t<n?-1:t>n?1:0)}var C=Array.prototype.slice;function D(t){return()=>t}const G=Math.sqrt(50),B=Math.sqrt(10),H=Math.sqrt(2);function J(t,n,r){const e=(n-t)/Math.max(0,r),o=Math.floor(Math.log10(e)),f=e/Math.pow(10,o),i=f>=G?10:f>=B?5:f>=H?2:1;let u,l,c;return o<0?(c=Math.pow(10,-o)/i,u=Math.round(t*c),l=Math.round(n*c),u/c<t&&++u,l/c>n&&--l,c=-c):(c=Math.pow(10,o)*i,u=Math.round(t/c),l=Math.round(n/c),u*c<t&&++u,l*c>n&&--l),l<u&&.5<=r&&r<2?J(t,n,2*r):[u,l,c]}function K(t,n,r){if(!((r=+r)>0))return[];if((t=+t)===(n=+n))return[t];const e=n<t,[o,f,i]=e?J(n,t,r):J(t,n,r);if(!(f>=o))return[];const u=f-o+1,l=new Array(u);if(e)if(i<0)for(let t=0;t<u;++t)l[t]=(f-t)/-i;else for(let t=0;t<u;++t)l[t]=(f-t)*i;else if(i<0)for(let t=0;t<u;++t)l[t]=(o+t)/-i;else for(let t=0;t<u;++t)l[t]=(o+t)*i;return l}function Q(t,n,r){return J(t=+t,n=+n,r=+r)[2]}function V(t,n,r){let e;for(;;){const o=Q(t,n,r);if(o===e||0===o||!isFinite(o))return[t,n];if(o>0){const r=Math.ceil(t/o),e=Math.floor(n/o);t=(r-(r*o>t))*o,n=(e+(e*o<n))*o}else if(o<0){const r=-o,e=Math.ceil(t*r),f=Math.floor(n*r);t=(e-(e/r>t))/r,n=(f+(f/r<n))/r}e=o}}function W(t){return Math.max(1,Math.ceil(Math.log(m(t))/Math.LN2)+1)}function X(){var t=k,n=A,r=W;function e(e){Array.isArray(e)||(e=Array.from(e));var o,f,i,l=e.length,c=new Array(l);for(o=0;o<l;++o)c[o]=t(e[o],o,e);var s=n(c),a=s[0],h=s[1],d=r(c,a,h);if(!Array.isArray(d)){const t=h,r=+d;if(n===A&&([a,h]=V(a,h,r)),(d=K(a,h,r))[0]<=a&&(i=Q(a,h,r)),d[d.length-1]>=h)if(t>=h&&n===A){const t=Q(a,h,r);isFinite(t)&&(t>0?h=(Math.floor(h/t)+1)*t:t<0&&(h=(Math.ceil(h*-t)+1)/-t))}else d.pop()}for(var p=d.length,y=0,m=p;d[y]<=a;)++y;for(;d[m-1]>h;)--m;(y||m<p)&&(d=d.slice(y,m),p=m-y);var g,v=new Array(p+1);for(o=0;o<=p;++o)(g=v[o]=[]).x0=o>0?d[o-1]:a,g.x1=o<p?d[o]:h;if(isFinite(i)){if(i>0)for(o=0;o<l;++o)null!=(f=c[o])&&a<=f&&f<=h&&v[Math.min(p,Math.floor((f-a)/i))].push(e[o]);else if(i<0)for(o=0;o<l;++o)if(null!=(f=c[o])&&a<=f&&f<=h){const t=Math.floor((a-f)*i);v[Math.min(p,t+(d[t]<=f))].push(e[o])}}else for(o=0;o<l;++o)null!=(f=c[o])&&a<=f&&f<=h&&v[u(d,f,0,p)].push(e[o]);return v}return e.value=function(n){return arguments.length?(t="function"==typeof n?n:D(n),e):t},e.domain=function(t){return arguments.length?(n="function"==typeof t?t:D([t[0],t[1]]),e):n},e.thresholds=function(t){return arguments.length?(r="function"==typeof t?t:D(Array.isArray(t)?C.call(t):t),e):r},e}function Y(t,n){let r;if(void 0===n)for(const n of t)null!=n&&(r<n||void 0===r&&n>=n)&&(r=n);else{let e=-1;for(let o of t)null!=(o=n(o,++e,t))&&(r<o||void 0===r&&o>=o)&&(r=o)}return r}function Z(t,n){let r,e=-1,o=-1;if(void 0===n)for(const n of t)++o,null!=n&&(r<n||void 0===r&&n>=n)&&(r=n,e=o);else for(let f of t)null!=(f=n(f,++o,t))&&(r<f||void 0===r&&f>=f)&&(r=f,e=o);return e}function $(t,n){let r;if(void 0===n)for(const n of t)null!=n&&(r>n||void 0===r&&n>=n)&&(r=n);else{let e=-1;for(let o of t)null!=(o=n(o,++e,t))&&(r>o||void 0===r&&o>=o)&&(r=o)}return r}function tt(t,n){let r,e=-1,o=-1;if(void 0===n)for(const n of t)++o,null!=n&&(r>n||void 0===r&&n>=n)&&(r=n,e=o);else for(let f of t)null!=(f=n(f,++o,t))&&(r>f||void 0===r&&f>=f)&&(r=f,e=o);return e}function nt(t,n,r=0,e=1/0,o){if(n=Math.floor(n),r=Math.floor(Math.max(0,r)),e=Math.floor(Math.min(t.length-1,e)),!(r<=n&&n<=e))return t;for(o=void 0===o?z:P(o);e>r;){if(e-r>600){const f=e-r+1,i=n-r+1,u=Math.log(f),l=.5*Math.exp(2*u/3),c=.5*Math.sqrt(u*l*(f-l)/f)*(i-f/2<0?-1:1);nt(t,n,Math.max(r,Math.floor(n-i*l/f+c)),Math.min(e,Math.floor(n+(f-i)*l/f+c)),o)}const f=t[n];let i=r,u=e;for(rt(t,r,n),o(t[e],f)>0&&rt(t,r,e);i<u;){for(rt(t,i,u),++i,--u;o(t[i],f)<0;)++i;for(;o(t[u],f)>0;)--u}0===o(t[r],f)?rt(t,r,u):(++u,rt(t,u,e)),u<=n&&(r=u+1),n<=u&&(e=u-1)}return t}function rt(t,n,r){const e=t[n];t[n]=t[r],t[r]=e}function et(t,r=n){let e,o=!1;if(1===r.length){let f;for(const i of t){const t=r(i);(o?n(t,f)>0:0===n(t,t))&&(e=i,f=t,o=!0)}}else for(const n of t)(o?r(n,e)>0:0===r(n,n))&&(e=n,o=!0);return e}function ot(t,n,r){if(t=Float64Array.from(function*(t,n){if(void 0===n)for(let n of t)null!=n&&(n=+n)>=n&&(yield n);else{let r=-1;for(let e of t)null!=(e=n(e,++r,t))&&(e=+e)>=e&&(yield e)}}(t,r)),(e=t.length)&&!isNaN(n=+n)){if(n<=0||e<2)return $(t);if(n>=1)return Y(t);var e,o=(e-1)*n,f=Math.floor(o),i=Y(nt(t,f).subarray(0,f+1));return i+($(t.subarray(f+1))-i)*(o-f)}}function ft(t,n,r=f){if(!isNaN(n=+n)){if(e=Float64Array.from(t,(n,e)=>f(r(t[e],e,t))),n<=0)return tt(e);if(n>=1)return Z(e);var e,o=Uint32Array.from(t,(t,n)=>n),i=e.length-1,u=Math.floor(i*n);return nt(o,u,0,i,(t,n)=>z(e[t],e[n])),(u=et(o.subarray(0,u+1),t=>e[t]))>=0?u:-1}}function it(t,n){return[t,n]}function ut(t,r=n){if(1===r.length)return tt(t,r);let e,o=-1,f=-1;for(const n of t)++f,(o<0?0===r(n,n):r(n,e)<0)&&(e=n,o=f);return o}var lt=ct(Math.random);function ct(t){return function(n,r=0,e=n.length){let o=e-(r=+r);for(;o;){const e=t()*o--|0,f=n[o+r];n[o+r]=n[e+r],n[e+r]=f}return n}}function st(t){if(!(o=t.length))return[];for(var n=-1,r=$(t,at),e=new Array(r);++n<r;)for(var o,f=-1,i=e[n]=new Array(o);++f<o;)i[f]=t[f][n];return e}function at(t){return t.length}function ht(t){return t instanceof InternSet?t:new InternSet(t)}function dt(t,n){const r=t[Symbol.iterator](),e=new Set;for(const t of n){const n=pt(t);if(e.has(n))continue;let o,f;for(;({value:o,done:f}=r.next());){if(f)return!1;const t=pt(o);if(e.add(t),Object.is(n,t))break}}return!0}function pt(t){return null!==t&&"object"==typeof t?t.valueOf():t}t.Adder=x,t.InternMap=InternMap,t.InternSet=InternSet,t.ascending=n,t.bin=X,t.bisect=u,t.bisectCenter=c,t.bisectLeft=l,t.bisectRight=u,t.bisector=e,t.blur=function(t,n){if(!((n=+n)>=0))throw new RangeError("invalid r");let r=t.length;if(!((r=Math.floor(r))>=0))throw new RangeError("invalid length");if(!r||!n)return t;const e=y(n),o=t.slice();return e(t,o,0,r,1),e(o,t,0,r,1),e(t,o,0,r,1),t},t.blur2=s,t.blurImage=a,t.count=m,t.cross=function(...t){const n="function"==typeof t[t.length-1]&&function(t){return n=>t(...n)}(t.pop()),r=(t=t.map(M)).map(g),e=t.length-1,o=new Array(e+1).fill(0),f=[];if(e<0||r.some(v))return f;for(;;){f.push(o.map((n,r)=>t[r][n]));let i=e;for(;++o[i]===r[i];){if(0===i)return n?f.map(n):f;o[i--]=0}}},t.cumsum=function(t,n){var r=0,e=0;return Float64Array.from(t,void 0===n?t=>r+=+t||0:o=>r+=+n(o,e++,t)||0)},t.descending=r,t.deviation=b,t.difference=function(t,...n){t=new InternSet(t);for(const r of n)for(const n of r)t.delete(n);return t},t.disjoint=function(t,n){const r=n[Symbol.iterator](),e=new InternSet;for(const n of t){if(e.has(n))return!1;let t,o;for(;({value:t,done:o}=r.next())&&!o;){if(Object.is(n,t))return!1;e.add(t)}}return!0},t.every=function(t,n){if("function"!=typeof n)throw new TypeError("test is not a function");let r=-1;for(const e of t)if(!n(e,++r,t))return!1;return!0},t.extent=A,t.fcumsum=function(t,n){const r=new x;let e=-1;return Float64Array.from(t,void 0===n?t=>r.add(+t||0):o=>r.add(+n(o,++e,t)||0))},t.filter=function(t,n){if("function"!=typeof n)throw new TypeError("test is not a function");const r=[];let e=-1;for(const o of t)n(o,++e,t)&&r.push(o);return r},t.flatGroup=function(t,...n){return I(F(t,...n),n)},t.flatRollup=function(t,n,...r){return I(q(t,n,...r),r)},t.fsum=function(t,n){const r=new x;if(void 0===n)for(let n of t)(n=+n)&&r.add(n);else{let e=-1;for(let o of t)(o=+n(o,++e,t))&&r.add(o)}return+r},t.greatest=et,t.greatestIndex=function(t,r=n){if(1===r.length)return Z(t,r);let e,o=-1,f=-1;for(const n of t)++f,(o<0?0===r(n,n):r(n,e)>0)&&(e=n,o=f);return o},t.group=T,t.groupSort=function(t,r,e){return(2!==r.length?L(j(t,r,e),([t,r],[e,o])=>n(r,o)||n(t,e)):L(T(t,e),([t,e],[o,f])=>r(e,f)||n(t,o))).map(([t])=>t)},t.groups=F,t.histogram=X,t.index=function(t,...n){return O(t,k,R,n)},t.indexes=function(t,...n){return O(t,Array.from,R,n)},t.intersection=function(t,...n){t=new InternSet(t),n=n.map(ht);t:for(const r of t)for(const e of n)if(!e.has(r)){t.delete(r);continue t}return t},t.least=function(t,r=n){let e,o=!1;if(1===r.length){let f;for(const i of t){const t=r(i);(o?n(t,f)<0:0===n(t,t))&&(e=i,f=t,o=!0)}}else for(const n of t)(o?r(n,e)<0:0===r(n,n))&&(e=n,o=!0);return e},t.leastIndex=ut,t.map=function(t,n){if("function"!=typeof t[Symbol.iterator])throw new TypeError("values is not iterable");if("function"!=typeof n)throw new TypeError("mapper is not a function");return Array.from(t,(r,e)=>n(r,e,t))},t.max=Y,t.maxIndex=Z,t.mean=function(t,n){let r=0,e=0;if(void 0===n)for(let n of t)null!=n&&(n=+n)>=n&&(++r,e+=n);else{let o=-1;for(let f of t)null!=(f=n(f,++o,t))&&(f=+f)>=f&&(++r,e+=f)}if(r)return e/r},t.median=function(t,n){return ot(t,.5,n)},t.medianIndex=function(t,n){return ft(t,.5,n)},t.merge=function(t){return Array.from(function*(t){for(const n of t)yield*n}(t))},t.min=$,t.minIndex=tt,t.mode=function(t,n){const r=new InternMap;if(void 0===n)for(let n of t)null!=n&&n>=n&&r.set(n,(r.get(n)||0)+1);else{let e=-1;for(let o of t)null!=(o=n(o,++e,t))&&o>=o&&r.set(o,(r.get(o)||0)+1)}let e,o=0;for(const[t,n]of r)n>o&&(o=n,e=t);return e},t.nice=V,t.pairs=function(t,n=it){const r=[];let e,o=!1;for(const f of t)o&&r.push(n(e,f)),e=f,o=!0;return r},t.permute=U,t.quantile=ot,t.quantileIndex=ft,t.quantileSorted=function(t,n,r=f){if((e=t.length)&&!isNaN(n=+n)){if(n<=0||e<2)return+r(t[0],0,t);if(n>=1)return+r(t[e-1],e-1,t);var e,o=(e-1)*n,i=Math.floor(o),u=+r(t[i],i,t);return u+(+r(t[i+1],i+1,t)-u)*(o-i)}},t.quickselect=nt,t.range=function(t,n,r){t=+t,n=+n,r=(o=arguments.length)<2?(n=t,t=0,1):o<3?1:+r;for(var e=-1,o=0|Math.max(0,Math.ceil((n-t)/r)),f=new Array(o);++e<o;)f[e]=t+e*r;return f},t.rank=function(t,r=n){if("function"!=typeof t[Symbol.iterator])throw new TypeError("values is not iterable");let e=Array.from(t);const o=new Float64Array(e.length);2!==r.length&&(e=e.map(r),r=n);const f=(t,n)=>r(e[t],e[n]);let i,u;return(t=Uint32Array.from(e,(t,n)=>n)).sort(r===n?(t,n)=>z(e[t],e[n]):P(f)),t.forEach((t,n)=>{const r=f(t,void 0===i?t:i);r>=0?((void 0===i||r>0)&&(i=t,u=n),o[t]=u):o[t]=NaN}),o},t.reduce=function(t,n,r){if("function"!=typeof n)throw new TypeError("reducer is not a function");const e=t[Symbol.iterator]();let o,f,i=-1;if(arguments.length<3){if(({done:o,value:r}=e.next()),o)return;++i}for(;({done:o,value:f}=e.next()),!o;)r=n(r,f,++i,t);return r},t.reverse=function(t){if("function"!=typeof t[Symbol.iterator])throw new TypeError("values is not iterable");return Array.from(t).reverse()},t.rollup=j,t.rollups=q,t.scan=function(t,n){const r=ut(t,n);return r<0?void 0:r},t.shuffle=lt,t.shuffler=ct,t.some=function(t,n){if("function"!=typeof n)throw new TypeError("test is not a function");let r=-1;for(const e of t)if(n(e,++r,t))return!0;return!1},t.sort=L,t.subset=function(t,n){return dt(n,t)},t.sum=function(t,n){let r=0;if(void 0===n)for(let n of t)(n=+n)&&(r+=n);else{let e=-1;for(let o of t)(o=+n(o,++e,t))&&(r+=o)}return r},t.superset=dt,t.thresholdFreedmanDiaconis=function(t,n,r){const e=m(t),o=ot(t,.75)-ot(t,.25);return e&&o?Math.ceil((r-n)/(2*o*Math.pow(e,-1/3))):1},t.thresholdScott=function(t,n,r){const e=m(t),o=b(t);return e&&o?Math.ceil((r-n)*Math.cbrt(e)/(3.49*o)):1},t.thresholdSturges=W,t.tickIncrement=Q,t.tickStep=function(t,n,r){r=+r;const e=(n=+n)<(t=+t),o=e?Q(n,t,r):Q(t,n,r);return(e?-1:1)*(o<0?1/-o:o)},t.ticks=K,t.transpose=st,t.union=function(...t){const n=new InternSet;for(const r of t)for(const t of r)n.add(t);return n},t.variance=w,t.zip=function(){return st(arguments)}});
-
 </script>
 <script id="d3contour" type="text/plain">
 // https://d3js.org/d3-contour/ v4.0.3 Copyright 2012-2026 Mike Bostock
 !function(r,n){"object"==typeof exports&&"undefined"!=typeof module?n(exports,require("d3-array")):"function"==typeof define&&define.amd?define(["exports","d3-array"],n):n((r="undefined"!=typeof globalThis?globalThis:r||self).d3=r.d3||{},r.d3)}(this,function(r,n){"use strict";var t=Array.prototype.slice;function e(r,n){return r-n}var o=r=>()=>r;function i(r,n){for(var t,e=-1,o=n.length;++e<o;)if(t=u(r,n[e]))return t;return 0}function u(r,n){for(var t=n[0],e=n[1],o=-1,i=0,u=r.length,f=u-1;i<u;f=i++){var c=r[i],h=c[0],s=c[1],l=r[f],d=l[0],g=l[1];if(a(c,l,n))return 0;s>e!=g>e&&t<(d-h)*(e-s)/(g-s)+h&&(o=-o)}return o}function a(r,n,t){var e,o,i,u;return function(r,n,t){return(n[0]-r[0])*(t[1]-r[1])===(t[0]-r[0])*(n[1]-r[1])}(r,n,t)&&(o=r[e=+(r[0]===n[0])],i=t[e],u=n[e],o<=i&&i<=u||u<=i&&i<=o)}function f(){}var c=[[],[[[1,1.5],[.5,1]]],[[[1.5,1],[1,1.5]]],[[[1.5,1],[.5,1]]],[[[1,.5],[1.5,1]]],[[[1,1.5],[.5,1]],[[1,.5],[1.5,1]]],[[[1,.5],[1,1.5]]],[[[1,.5],[.5,1]]],[[[.5,1],[1,.5]]],[[[1,1.5],[1,.5]]],[[[.5,1],[1,.5]],[[1.5,1],[1,1.5]]],[[[1.5,1],[1,.5]]],[[[.5,1],[1.5,1]]],[[[1,1.5],[1.5,1]]],[[[.5,1],[1,1.5]]],[]];function h(){var r=1,u=1,a=n.thresholdSturges,h=w;function v(r){var t=a(r);if(Array.isArray(t))t=t.slice().sort(e);else{const e=n.extent(r,s);for(t=n.ticks(...n.nice(e[0],e[1],t),t);t[t.length-1]>=e[1];)t.pop();for(;t[1]<e[0];)t.shift()}return t.map(n=>p(r,n))}function p(n,t){const e=null==t?NaN:+t;if(isNaN(e))throw new Error(`invalid value: ${t}`);var o=[],a=[];return function(n,t,e){var o,i,a,f,h,s,d=new Array,g=new Array;o=i=-1,f=l(n[0],t),c[f<<1].forEach(v);for(;++o<r-1;)a=f,f=l(n[o+1],t),c[a|f<<1].forEach(v);c[f|0].forEach(v);for(;++i<u-1;){for(o=-1,f=l(n[i*r+r],t),h=l(n[i*r],t),c[f<<1|h<<2].forEach(v);++o<r-1;)a=f,f=l(n[i*r+r+o+1],t),s=h,h=l(n[i*r+o+1],t),c[a|f<<1|h<<2|s<<3].forEach(v);c[f|h<<3].forEach(v)}o=-1,h=n[i*r]>=t,c[h<<2].forEach(v);for(;++o<r-1;)s=h,h=l(n[i*r+o+1],t),c[h<<2|s<<3].forEach(v);function v(r){var n,t,u=[r[0][0]+o,r[0][1]+i],a=[r[1][0]+o,r[1][1]+i],f=y(u),c=y(a);(n=g[f])?(t=d[c])?(delete g[n.end],delete d[t.start],n===t?(n.ring.push(a),e(n.ring)):d[n.start]=g[t.end]={start:n.start,end:t.end,ring:n.ring.concat(t.ring)}):(delete g[n.end],n.ring.push(a),g[n.end=c]=n):(n=d[c])?(t=g[f])?(delete d[n.start],delete g[t.end],n===t?(n.ring.push(a),e(n.ring)):d[t.start]=g[n.end]={start:t.start,end:n.end,ring:t.ring.concat(n.ring)}):(delete d[n.start],n.ring.unshift(u),d[n.start=f]=n):d[f]=g[c]={start:f,end:c,ring:[u,a]}}c[h<<3].forEach(v)}(n,e,function(r){h(r,n,e),function(r){for(var n=0,t=r.length,e=r[t-1][1]*r[0][0]-r[t-1][0]*r[0][1];++n<t;)e+=r[n-1][1]*r[n][0]-r[n-1][0]*r[n][1];return e}(r)>0?o.push([r]):a.push(r)}),a.forEach(function(r){for(var n,t=0,e=o.length;t<e;++t)if(-1!==i((n=o[t])[0],r))return void n.push(r)}),{type:"MultiPolygon",value:t,coordinates:o}}function y(n){return 2*n[0]+n[1]*(r+1)*4}function w(n,t,e){n.forEach(function(n){var o=n[0],i=n[1],a=0|o,f=0|i,c=d(t[f*r+a]);o>0&&o<r&&a===o&&(n[0]=g(o,d(t[f*r+a-1]),c,e)),i>0&&i<u&&f===i&&(n[1]=g(i,d(t[(f-1)*r+a]),c,e))})}return v.contour=p,v.size=function(n){if(!arguments.length)return[r,u];var t=Math.floor(n[0]),e=Math.floor(n[1]);if(!(t>=0&&e>=0))throw new Error("invalid size");return r=t,u=e,v},v.thresholds=function(r){return arguments.length?(a="function"==typeof r?r:Array.isArray(r)?o(t.call(r)):o(r),v):a},v.smooth=function(r){return arguments.length?(h=r?w:f,v):h===w},v}function s(r){return isFinite(r)?r:NaN}function l(r,n){return null!=r&&+r>=n}function d(r){return null==r||isNaN(r=+r)?-1/0:r}function g(r,n,t,e){const o=e-n,i=t-n,u=isFinite(o)||isFinite(i)?o/i:Math.sign(o)/Math.sign(i);return isNaN(u)?r:r+u-.5}function v(r){return r[0]}function p(r){return r[1]}function y(){return 1}r.contourDensity=function(){var r=v,e=p,i=y,u=960,a=500,f=20,c=2,s=3*f,l=u+2*s>>c,d=a+2*s>>c,g=o(20);function w(t){var o=new Float32Array(l*d),u=Math.pow(2,-c),a=-1;for(const n of t){var h=(r(n,++a,t)+s)*u,g=(e(n,a,t)+s)*u,v=+i(n,a,t);if(v&&h>=0&&h<l&&g>=0&&g<d){var p=Math.floor(h),y=Math.floor(g),w=h-p-.5,E=g-y-.5;o[p+y*l]+=(1-w)*(1-E)*v,o[p+1+y*l]+=w*(1-E)*v,o[p+1+(y+1)*l]+=w*E*v,o[p+(y+1)*l]+=(1-w)*E*v}}return n.blur2({data:o,width:l,height:d},f*u),o}function E(r){var t=w(r),e=g(t),o=Math.pow(2,2*c);return Array.isArray(e)||(e=n.ticks(Number.MIN_VALUE,n.max(t)/o,e)),h().size([l,d]).thresholds(e.map(r=>r*o))(t).map((r,n)=>(r.value=+e[n],M(r)))}function M(r){return r.coordinates.forEach(A),r}function A(r){r.forEach(N)}function N(r){r.forEach(m)}function m(r){r[0]=r[0]*Math.pow(2,c)-s,r[1]=r[1]*Math.pow(2,c)-s}function b(){return l=u+2*(s=3*f)>>c,d=a+2*s>>c,E}return E.contours=function(r){var t=w(r),e=h().size([l,d]),o=Math.pow(2,2*c),i=r=>{r=+r;var n=M(e.contour(t,r*o));return n.value=r,n};return Object.defineProperty(i,"max",{get:()=>n.max(t)/o}),i},E.x=function(n){return arguments.length?(r="function"==typeof n?n:o(+n),E):r},E.y=function(r){return arguments.length?(e="function"==typeof r?r:o(+r),E):e},E.weight=function(r){return arguments.length?(i="function"==typeof r?r:o(+r),E):i},E.size=function(r){if(!arguments.length)return[u,a];var n=+r[0],t=+r[1];if(!(n>=0&&t>=0))throw new Error("invalid size");return u=n,a=t,b()},E.cellSize=function(r){if(!arguments.length)return 1<<c;if(!((r=+r)>=1))throw new Error("invalid cell size");return c=Math.floor(Math.log(r)/Math.LN2),b()},E.thresholds=function(r){return arguments.length?(g="function"==typeof r?r:Array.isArray(r)?o(t.call(r)):o(r),E):g},E.bandwidth=function(r){if(!arguments.length)return Math.sqrt(f*(f+1));if(!((r=+r)>=0))throw new Error("invalid bandwidth");return f=(Math.sqrt(4*r*r+1)-1)/2,b()},E},r.contours=h});
-
 </script>
 <script id="wrksrc" type="text/plain">
 // Routing worker. Engine, geocoder and d3 (array + contour) are concatenated before this file.
@@ -392,27 +458,24 @@ details a { color: var(--accent); }
       if (md > tol * tol) { keep[mi] = 1; st.push([a, mi], [mi, b]); } }
     const o = r.filter((_, i) => keep[i]); return o.length >= 4 ? o : r;
   }
-  // rings of two nested contour levels, filled even-odd, turned into proper polygons with holes
+  // rings of two nested contour levels (they never cross), filled even-odd, turned into polygons with holes.
+  // Nesting is decided on the raw rings: parent = smallest larger ring containing most of the probe vertices.
   function bandPolygons(rings, nx, ny) {
-    // nest rings by containment (most vertices inside), then keep a hole only if it lies fully inside its outer ring
-    const R = rings.map((r) => ({ r, a: ringArea(r), bb: bbox(r) })).filter((o) => o.a > 0.05).sort((p, q) => q.a - p.a);
-    const frac = (r, P) => { const step = Math.max(1, Math.floor(r.length / 16)); let n = 0, k = 0; for (let i = 0; i < r.length; i += step) { k++; if (pip(r[i][0], r[i][1], P)) n++; } return n / k; };
+    const R = rings.map((r) => ({ r, a: ringArea(r), bb: bbox(r) })).filter((o) => o.a > 0.02).sort((p, q) => q.a - p.a);
+    const onBorder = (x, y) => x <= 0.001 || y <= 0.001 || x >= nx - 1.001 || y >= ny - 1.001;
+    const probes = (r) => { const out = [], n = r.length - 1, step = Math.max(1, Math.floor(n / 7)); for (let i = 0; i < n && out.length < 7; i += step) if (!onBorder(r[i][0], r[i][1])) out.push(r[i]); return out.length ? out : [r[0]]; };
     const done = [];
     for (const o of R) {
-      let parent = null;
+      const P = probes(o.r); let parent = null;
       for (let k = done.length - 1; k >= 0; k--) {
         const p = done[k];
-        if (o.bb[0] < p.bb[0] - 0.5 || o.bb[2] > p.bb[2] + 0.5 || o.bb[1] < p.bb[1] - 0.5 || o.bb[3] > p.bb[3] + 0.5) continue;
-        if (frac(o.r, p.r) > 0.5) { parent = p; break; }
+        if (o.bb[0] < p.bb[0] - 1e-6 || o.bb[2] > p.bb[2] + 1e-6 || o.bb[1] < p.bb[1] - 1e-6 || o.bb[3] > p.bb[3] + 1e-6) continue;
+        let n = 0; for (const [x, y] of P) if (pip(x, y, p.r)) n++;
+        if (n * 2 > P.length) { parent = p; break; }
       }
-      o.depth = parent ? parent.depth + 1 : 0; o.parent = parent;
-      if (o.depth % 2 === 0) o.poly = [o.r];
+      o.depth = parent ? parent.depth + 1 : 0;
+      if (o.depth % 2 === 0) { o.poly = [o.r]; o.owner = o; } else { o.owner = parent.owner; parent.owner.poly.push(o.r); }
       done.push(o);
-    }
-    for (const o of done) {
-      if (o.depth % 2 === 0) continue;
-      const outer = o.parent.poly[0];
-      if (o.r.every(([x, y]) => pip(x, y, outer))) o.parent.poly.push(o.r);
     }
     return done.filter((o) => o.depth % 2 === 0).map((o) => o.poly);
   }
@@ -422,11 +485,27 @@ details a { color: var(--accent); }
     const features = [];
     BANDS.forEach((b, i) => {
       const rings = (byB[b] || []).concat(i > 0 ? (byB[BANDS[i - 1]] || []) : []);
-      const polys = bandPolygons(rings.map((r) => simplify(r, 0.08)), nx, ny);
+      const polys = bandPolygons(rings, nx, ny).map((poly) => poly.map((r) => simplify(r, 0.06)));
       if (!polys.length) return;
-      features.push({ type: 'Feature', properties: { b: i, min: b }, geometry: { type: 'MultiPolygon', coordinates: polys.map((poly) => poly.map((r) => r.map(([x, y]) => ll(x * gs, y * gs)))) } });
+      // RFC 7946 winding: outer ring counter-clockwise, holes clockwise. MapLibre decides outer vs hole by winding,
+      // and the holes here come from the inner level's outer rings, so they must be turned around.
+      const wind = (r, outer) => { let s = 0; for (let k = 0, j = r.length - 1; k < r.length; j = k++) s += (r[j][0] - r[k][0]) * (r[j][1] + r[k][1]); return (s > 0) === outer ? r : r.slice().reverse(); };
+      features.push({ type: 'Feature', properties: { b: i, min: b }, geometry: { type: 'MultiPolygon', coordinates: polys.map((poly) => poly.map((r, k) => wind(r.map(([x, y]) => ll(x * gs, y * gs)), k === 0))) } });
     });
     return { type: 'FeatureCollection', features };
+  }
+  // Cells without a value (lakes, and for cars also fields or forest far from any road) take the value of their
+  // neighbours, so zones do not get ring-shaped holes around every lake or forest. Water is drawn above the zones anyway.
+  // Two-pass chamfer distance: about 0.8 min per 200 m cell on land (walking in), 6 min per cell over water so a jump in time sits under the water, not on the shore.
+  function fillGaps(src, land) {
+    const nx = grid.nx, ny = grid.ny, v = Float32Array.from(src), hole = new Uint8Array(v.length);
+    for (let k = 0; k < v.length; k++) if (v[k] >= 900 && (grid.wet[k] || (land && grid.ce[k] < 0))) hole[k] = 1;
+    const step = (k, from, mul) => { if (!hole[k]) return; const c = (grid.wet[k] ? 6 : 0.8) * mul, t = v[from] + c; if (t < v[k]) v[k] = t; };
+    for (let pass = 0; pass < 2; pass++) {
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const k = j * nx + i; if (!hole[k]) continue; if (i > 0) step(k, k - 1, 1); if (j > 0) { step(k, k - nx, 1); if (i > 0) step(k, k - nx - 1, 1.414); if (i < nx - 1) step(k, k - nx + 1, 1.414); } }
+      for (let j = ny - 1; j >= 0; j--) for (let i = nx - 1; i >= 0; i--) { const k = j * nx + i; if (!hole[k]) continue; if (i < nx - 1) step(k, k + 1, 1); if (j < ny - 1) { step(k, k + nx, 1); if (i < nx - 1) step(k, k + nx + 1, 1.414); if (i > 0) step(k, k + nx - 1, 1.414); } }
+    }
+    return v;
   }
   function carGeo(r) {
     if (!r || !r.edges || !r.edges.length) return null;
@@ -453,8 +532,9 @@ details a { color: var(--accent); }
       if (!ready) return;
       if (m.type === 'iso') {
         const car = Engine.carGrid(m.o, m.day, m.t, 70), pt = Engine.transitGrid(m.o, m.day, m.t);
-        const g = m.mode === 'car' ? car : pt, vals = new Float64Array(g.length);
-        for (let i = 0; i < g.length; i++) vals[i] = -g[i];
+        const g = fillGaps(m.mode === 'car' ? car : pt, m.mode === 'car'), vals = new Float64Array(g.length);
+        // cap what is still unreachable so the contour lines of different levels never pile up on one cell edge
+        for (let i = 0; i < g.length; i++) vals[i] = -Math.min(g[i], 34);
         const fc = isoBands(vals, grid.nx, grid.ny, grid.gs);
         self.postMessage({ type: 'res', id: m.id, data: { car, pt, fc, mode: m.mode } }, [car.buffer, pt.buffer]);
       } else if (m.type === 'route') {
@@ -477,7 +557,6 @@ details a { color: var(--accent); }
     } catch (err) { self.postMessage({ type: 'res', id: m.id, error: String(err && err.stack || err) }); }
   };
 })();
-
 </script>
 <script id="geosrc" type="text/plain">
 // Address geocoder for skelbiu.lt / aruodas location lines, using the road graph and OSM place names.
@@ -542,7 +621,6 @@ function makeGeocoder(E, D) {
   };
 }
 if (typeof module !== 'undefined') module.exports = makeGeocoder;
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.js"></script>
 <script id="engsrc">
@@ -657,7 +735,7 @@ const Engine = (function () {
     G.buckets = buckets;
   }
 
-  function snap(x, y, maxD = 1500) {
+  function snap(x, y, maxD = 1500, ok) {
     let best = null, bd = Infinity;
     const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL);
     const R = Math.ceil(maxD / CELL);
@@ -669,7 +747,7 @@ const Engine = (function () {
           const dx = s[3] - s[1], dy = s[4] - s[2], l2 = dx * dx + dy * dy;
           let t = l2 ? ((x - s[1]) * dx + (y - s[2]) * dy) / l2 : 0; t = t < 0 ? 0 : t > 1 ? 1 : t;
           const px = s[1] + t * dx, py = s[2] + t * dy, d = Math.hypot(px - x, py - y);
-          if (d < bd) { bd = d; best = { e: s[0], along: s[5] + t * s[6], px, py, d }; }
+          if (d < bd && (!ok || ok(px, py))) { bd = d; best = { e: s[0], along: s[5] + t * s[6], px, py, d }; }
         }
       }
       if (best && bd < r * CELL) break;
@@ -804,15 +882,51 @@ const Engine = (function () {
 
   // ---------- isochrone grid
   const GS = 200;
+  // Water mask (lakes, river polygons and river lines) so a grid cell never takes its time from a road across the water.
+  const WM = 40; let wmask = null, wmw = 0, wmh = 0;
+  function waterMask() {
+    if (wmask) return wmask;
+    wmw = Math.ceil(G.W / WM); wmh = Math.ceil(G.H / WM); wmask = new Uint8Array(wmw * wmh);
+    const X = (v) => wx(v) / WM, Y = (v) => wy(v) / WM;
+    for (const poly of (D.ctx.water || [])) {
+      const rows = new Map();
+      for (const ring of poly) {
+        const n = ring.length / 2;
+        for (let a = 0; a < n; a++) {
+          const b = (a + 1) % n, x0 = X(ring[2 * a]), y0 = Y(ring[2 * a + 1]), x1 = X(ring[2 * b]), y1 = Y(ring[2 * b + 1]);
+          if (y0 === y1) continue;
+          const ya = Math.min(y0, y1), yb = Math.max(y0, y1);
+          for (let r = Math.max(0, Math.ceil(ya - 0.5)); r + 0.5 < yb && r < wmh; r++) { const yc = r + 0.5; if (yc < ya) continue; const xc = x0 + (yc - y0) / (y1 - y0) * (x1 - x0); let L = rows.get(r); if (!L) rows.set(r, L = []); L.push(xc); }
+        }
+      }
+      for (const [r, L] of rows) { L.sort((p, q) => p - q); for (let k = 0; k + 1 < L.length; k += 2) { const c0 = Math.max(0, Math.round(L[k])), c1 = Math.min(wmw - 1, Math.round(L[k + 1]) - 1); for (let c = c0; c <= c1; c++) wmask[r * wmw + c] = 1; } }
+    }
+    for (const line of (D.ctx.rivers || [])) {
+      for (let a = 0; a + 3 < line.length; a += 2) {
+        const x0 = X(line[a]), y0 = Y(line[a + 1]), x1 = X(line[a + 2]), y1 = Y(line[a + 3]); const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 2) + 1;
+        for (let s = 0; s <= n; s++) { const c = Math.floor(x0 + (x1 - x0) * s / n), r = Math.floor(y0 + (y1 - y0) * s / n); if (c >= 0 && r >= 0 && c < wmw && r < wmh && !wmask[r * wmw + c]) wmask[r * wmw + c] = 2; }
+      }
+    }
+    return wmask;
+  }
+  // 1 = lake or river area, 2 = thin river line (blocks a crossing but is not itself water for a grid cell)
+  function waterAt(x, y) { const m = waterMask(), c = Math.floor(x / WM), r = Math.floor(y / WM); return c >= 0 && r >= 0 && c < wmw && r < wmh ? m[r * wmw + c] : 0; }
+  function isWater(x, y) { return waterAt(x, y) > 0; }
+  // a grid cell counts as water only when most of it is lake or river area (small ponds do not punch holes in the zones)
+  function cellWet(x, y, gs) { let n = 0; for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) if (waterAt(x + a * gs / 5, y + b * gs / 5) === 1) n++; return n >= 13; }
+  // true when the straight line between two points stays on land
+  function dryLine(x0, y0, x1, y1) { const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / (WM / 2)); for (let s = 1; s < n; s++) if (isWater(x0 + (x1 - x0) * s / n, y0 + (y1 - y0) * s / n)) return false; return true; }
   function gridInit() {
     if (G.grid) return G.grid;
     const nx = Math.ceil(G.W / GS), ny = Math.ceil(G.H / GS), n = nx * ny;
-    const ce = new Int32Array(n).fill(-1), cf = new Float32Array(n), cd = new Float32Array(n);
+    const ce = new Int32Array(n).fill(-1), cf = new Float32Array(n), cd = new Float32Array(n), wet = new Uint8Array(n);
     for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
-      const s = snap((i + .5) * GS, (j + .5) * GS, 900); const k = j * nx + i;
+      const x = (i + .5) * GS, y = (j + .5) * GS, k = j * nx + i;
+      if (cellWet(x, y, GS)) { wet[k] = 1; continue; }
+      const s = snap(x, y, 900, (px, py) => dryLine(x, y, px, py));
       if (s) { ce[k] = s.e; cf[k] = s.f; cd[k] = s.d; }
     }
-    G.grid = { nx, ny, ce, cf, cd, gs: GS };
+    G.grid = { nx, ny, ce, cf, cd, wet, gs: GS };
     return G.grid;
   }
 
@@ -838,8 +952,8 @@ const Engine = (function () {
       const i0 = Math.max(0, Math.floor((x - rad) / gs)), i1 = Math.min(gr.nx - 1, Math.floor((x + rad) / gs));
       const j0 = Math.max(0, Math.floor((y - rad) / gs)), j1 = Math.min(gr.ny - 1, Math.floor((y + rad) / gs));
       for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-        const d = Math.hypot((i + .5) * gs - x, (j + .5) * gs - y); if (d > rad) continue;
-        const t = base + d / WALK, k = j * gr.nx + i; if (t < out[k]) out[k] = t;
+        const cx = (i + .5) * gs, cy = (j + .5) * gs, d = Math.hypot(cx - x, cy - y); if (d > rad) continue;
+        const t = base + d / WALK, k = j * gr.nx + i; if (t < out[k] && !gr.wet[k] && (d < 250 || dryLine(x, y, cx, cy))) out[k] = t;
       }
     };
     splat(origin.x, origin.y, 0, 2000);
@@ -850,7 +964,6 @@ const Engine = (function () {
   return { build, G: () => G, D: () => D, toWorld, toLonLat, edgePts, snap, carRoute, transitRoute, carGrid, transitGrid, gridInit, congestion, CENTER, WALK, edgeCost };
 })();
 if (typeof module !== 'undefined') module.exports = Engine;
-
 </script>
 <script>
 (function () {
@@ -999,7 +1112,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     const gj = (id, data, extra) => { src[id] = Object.assign({ type: 'geojson', data, maxzoom: 14, tolerance: 0.45, buffer: 64 }, extra || {}); };
     for (const k of ['roads', 'water', 'rivers', 'rail', 'bounds', 'ptlines', 'stops', 'forest', 'park', 'cycle', 'track', 'places']) gj(k, G0[k]);
     gj('iso', EMPTY, { maxzoom: 13, tolerance: 0.3 }); gj('car', EMPTY); gj('ptride', EMPTY); gj('ptwalk', EMPTY); gj('probe', EMPTY);
-    gj('lst', EMPTY, { maxzoom: 16 }); gj('lstsel', EMPTY); gj('edu', eduGeo(), { maxzoom: 16 });
+    gj('lst', EMPTY, { maxzoom: 16 }); gj('lstsel', EMPTY); gj('mine', mineGeo()); gj('edu', eduGeo(), { maxzoom: 16 });
     const vis = (on) => ({ visibility: on ? 'visible' : 'none' });
     const add = (o) => { if (P[o.id]) o.paint = Object.assign({}, P[o.id], o.paint || {}); L.push(o); };
     add({ id: 'bg', type: 'background' });
@@ -1036,6 +1149,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     add({ id: 'edu', type: 'symbol', source: 'edu', minzoom: 12.2, filter: eduF('s', 'v'), layout: iconLayout(vis(S.lay.edu)) });
     add({ id: 'edup', type: 'symbol', source: 'edu', minzoom: 12.2, filter: eduF('s', 'p'), layout: iconLayout(vis(S.lay.edup)) });
     add({ id: 'pinned', type: 'symbol', source: 'edu', filter: ['==', ['get', 'pin'], 1], layout: iconLayout() });
+    add({ id: 'mine', type: 'symbol', source: 'mine', layout: iconLayout() });
     const LBL = [['loc', zOf(0.06), 24], ['v3', zOf(0.035), 24], ['v2', zOf(0.02), 24], ['suburb', zOf(0.02), 24], ['v1', zOf(0.012), 24], ['town', zOf(0.006), 24], ['city', 0, zOf(0.06)]];
     for (const [g, minz, maxz] of LBL) add({ id: 'lbl-' + g, type: 'symbol', source: 'places', minzoom: minz, maxzoom: maxz, filter: ['==', ['get', 'g'], g], layout: { 'icon-image': ['get', 'img'], 'icon-padding': 3, 'symbol-sort-key': ['get', 'k'] } });
     add({ id: 'probe', type: 'circle', source: 'probe' });
@@ -1135,7 +1249,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     req('iso', { type: 'iso', o: pt2(isoOrigin()), day: S.day, t: S.t, mode: S.iso.mode }, (d) => {
       S.isoCar = d.car; S.isoPt = d.pt; S.isoFC = d.fc; S.isoMode = d.mode;
       map.getSource('iso').setData(d.fc);
-      renderProbe(); refreshCardTimes();
+      renderProbe(); refreshCardTimes(); updatePinnedTimes(); renderSx();
     });
   }
   function recomputeAll() { computeRoute(); computeIso(); renderTimeUI(); refreshCardTimes(); }
@@ -1266,11 +1380,14 @@ if (typeof module !== 'undefined') module.exports = Engine;
   function lstWord(n) { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? 'skelbimas' : a === 0 || (b >= 11 && b <= 19) ? 'skelbimų' : 'skelbimai'; }
   function renderImp() {
     const n = LST.length, on = LST.filter((l) => l.lon != null).length;
-    $('#impclear').hidden = !n; $('#explst').hidden = !n;
+    $('#explst').hidden = !n; $('#impsum').hidden = !n;
     const row = document.querySelector('[data-row="lst"]'); if (row) { row.hidden = !n; const c = row.querySelector('.cnt'); if (c) c.textContent = on; }
-    if (!n) { if (!$('#impmsg').dataset.keep) impMsg(''); return; }
+    renderSx();
+    if (!n) { if (!$('#impmsg').dataset.keep) impMsg(''); $('#impstepsum').textContent = 'Kaip įkelti kompiuteryje (žymė, failas)'; return; }
     const d = lstMeta && lstMeta.at ? new Date(lstMeta.at) : null;
-    impMsg(`Žemėlapyje ${on} ${lstWord(on)}${n - on ? `, ${n - on} vietos nustatyti nepavyko (adresas už Kauno ir Kauno r. ribų arba neatpažintas)` : ''}.${d && !isNaN(d) ? ' Įkelta ' + d.toLocaleDateString('lt-LT') + ' ' + d.toLocaleTimeString('lt-LT', { hour: '2-digit', minute: '2-digit' }) + '.' : ''}`);
+    $('#impsumtxt').textContent = `${on} ${lstWord(on)} žemėlapyje${d && !isNaN(d) ? ', ' + d.toLocaleDateString('lt-LT') + ' ' + d.toLocaleTimeString('lt-LT', { hour: '2-digit', minute: '2-digit' }) : ''}`;
+    $('#impsteps').open = false; $('#impstepsum').textContent = 'Kiti būdai įkelti (žymė, failas)';
+    if (!$('#impmsg').dataset.keep) impMsg(n - on ? `${n - on} vietos nustatyti nepavyko (adresas už Kauno ir Kauno r. ribų arba neatpažintas).` : '');
   }
   function setListings(list, meta, fresh) {
     LST = list; lstMeta = meta; refreshListingsLayer();
@@ -1301,7 +1418,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     for (const f of files) { try { all.push(...rawFromText(await f.text())); } catch (e) { impMsg(`Nepavyko perskaityti „${f.name}“: ${(e && e.message) || e}`); return; } }
     importRaw(all, files.length === 1 ? files[0].name : files.length + ' failai');
   }
-  function clearListings() { LST = []; lstMeta = null; store.set('kaunas-obj-imp', null); refreshListingsLayer(); if (S.card && S.card.type === 'lst') closeCard(); }
+  function clearListings() { LST = []; lstMeta = null; store.set('kaunas-obj-imp', null); store.set('kaunas-obj-search', null); $('#impurl').value = ''; refreshListingsLayer(); if (S.card && S.card.type === 'lst') closeCard(); }
   function restoreListings() { const st = store.get('kaunas-obj-imp', null); if (st && Array.isArray(st.list) && st.list.length) setListings(st.list, st.meta || {}, false); }
   // bookmarklet: runs on the viewer's own aruodas.lt / skelbiu.lt results page, walks the result pages and offers the rows to copy
   function bookmarkletCode() {
@@ -1354,6 +1471,36 @@ if (typeof module !== 'undefined') module.exports = Engine;
     let app = ''; try { if (window.top === window && /^https?:$/.test(location.protocol)) app = location.origin + location.pathname; } catch (e) { }
     return 'javascript:' + encodeURIComponent('(' + run.toString() + ')(' + parseDoc.toString() + ',' + JSON.stringify(app) + ');void 0');
   }
+  // Paste-a-link import: the search pages are fetched through the app's small proxy (browsers cannot read other sites directly).
+  const PROXY = (window.KK_PROXY || '').replace(/\/+$/, '');
+  let searchBusy = false;
+  function pageUrlOf(href, p) {
+    const u = new URL(href);
+    if (/aruodas\.lt$/.test(u.hostname)) { let path = u.pathname.replace(/puslapis\/\d+\/?$/, ''); if (!path.endsWith('/')) path += '/'; u.pathname = p > 1 ? path + 'puslapis/' + p + '/' : path; }
+    else { u.hostname = 'm.skelbiu.lt'; u.pathname = u.pathname.replace(/\/\d+\/?$/, '').replace(/\/?$/, '/') + p; }
+    return u.href;
+  }
+  async function fetchSearch(href, quiet) {
+    if (searchBusy || !PROXY) return; searchBusy = true; $('#impgo').disabled = true;
+    const isA = /aruodas\.lt/i.test(href);
+    const rows = [], seen = new Set(); let err = '';
+    try {
+      for (let p = 1; p <= 40; p++) {
+        let r;
+        try { r = await fetch(PROXY + '/?url=' + encodeURIComponent(pageUrlOf(href, p))); } catch (e) { err = 'nepavyko pasiekti tarpinio serverio'; break; }
+        if (!r.ok) { if (p === 1) err = (r.status === 403 || r.status === 503) && isA ? 'aruodas' : 'HTTP ' + r.status; break; }
+        const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+        let n = 0; for (const o of parseDoc(doc)) { if (seen.has(o.id)) continue; seen.add(o.id); rows.push(o); n++; }
+        if (!n) { if (p === 1 && isA && /captcha|cf-chl|challenge/i.test(doc.documentElement.innerHTML.slice(0, 20000))) err = 'aruodas'; break; }
+        if (!quiet) impMsg(`Renkami skelbimai: ${rows.length} (${p} psl.)…`);
+        await new Promise((res) => setTimeout(res, 500));
+      }
+    } finally { searchBusy = false; $('#impgo').disabled = false; }
+    if (err === 'aruodas') { if (!quiet) impMsg('aruodas.lt neleidžia automatiškai nuskaityti paieškos. Atsidaryk tą pačią paiešką skelbiu.lt (ten yra ir aruodo skelbimai) ir įklijuok tą nuorodą, arba kompiuteryje naudok žymę.'); return; }
+    if (!rows.length) { if (!quiet) impMsg(err ? `Nepavyko įkelti (${err}). Pabandyk vėliau arba naudok žymę.` : 'Pagal šią nuorodą skelbimų nerasta. Patikrink, ar tai paieškos rezultatų sąrašas.'); return; }
+    store.set('kaunas-obj-search', { url: href, at: new Date().toISOString() }); $('#imprefresh').hidden = false;
+    importRaw(rows, 'nuoroda');
+  }
   function wireImport() {
     const code = bookmarkletCode(), a = $('#bmlink');
     a.setAttribute('href', code); $('#bmcode').value = code;
@@ -1363,16 +1510,21 @@ if (typeof module !== 'undefined') module.exports = Engine;
     const go = (raw) => {
       const t = String(raw || '').trim(); if (!t) return;
       if (/^https?:\/\/([a-z0-9-]+\.)*(aruodas|skelbiu)\.lt\//i.test(t)) {
+        u.value = t;
+        if (PROXY) { fetchSearch(t); return; }
         const w = window.open(t, '_blank');
-        impMsg(w ? 'Aruodas atsidarė naujame skirtuke. Ten spausk žymę „Į žemėlapį“.' : 'Naršyklė neleido atidaryti. Atidaryk nuorodą pats ir ten spausk žymę „Į žemėlapį“.');
-        u.value = ''; return;
+        impMsg(w ? 'Paieška atsidarė naujame skirtuke. Ten spausk žymę „Į žemėlapį“ (žr. „Kaip įkelti kompiuteryje“).' : 'Naršyklė neleido atidaryti. Atidaryk nuorodą pats ir ten spausk žymę „Į žemėlapį“.');
+        $('#impsteps').open = true; return;
       }
-      if (/^https?:/i.test(t)) { impMsg('Tinka tik aruodas.lt ar skelbiu.lt paieškos nuoroda.'); return; }
+      if (/^https?:/i.test(t)) { impMsg('Tinka tik skelbiu.lt ar aruodas.lt paieškos nuoroda.'); return; }
       u.value = ''; importText(t, 'įklijuota');
     };
     u.addEventListener('paste', (ev) => { const t = ev.clipboardData && ev.clipboardData.getData('text'); if (t) { ev.preventDefault(); go(t); } });
     u.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') go(u.value); });
-    u.addEventListener('change', () => go(u.value));
+    $('#impgo').onclick = () => go(u.value);
+    $('#imprefresh').onclick = () => { const s = store.get('kaunas-obj-search', null); if (s && s.url) fetchSearch(s.url); };
+    const saved = store.get('kaunas-obj-search', null);
+    if (saved && saved.url) u.value = saved.url;
     $('#impfile').onclick = () => $('#impinput').click();
     $('#impinput').addEventListener('change', (ev) => { const f = [...ev.target.files]; ev.target.value = ''; if (f.length) importFiles(f); });
     $('#impclear').onclick = clearListings;
@@ -1403,6 +1555,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     if (map) for (const id of L.ids) if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
     const cb = document.querySelector(`[data-lay="${k}"]`); if (cb) cb.checked = on;
     if (!quiet) store.set('kaunas-obj-lay', Object.assign({}, S.lay, { iso: S.iso.on }));
+    renderSx();
     if (!on && S.card && ((k === 'lst' && S.card.type === 'lst') || (/^(edu|kg)p?$/.test(k) && S.card.type === 'edu' && (S.card.item.kind === 's') === k.startsWith('edu') && (S.card.item.own === 'p') === k.endsWith('p')))) closeCard();
   }
   function renderLayers() {
@@ -1415,18 +1568,64 @@ if (typeof module !== 'undefined') module.exports = Engine;
     $('#laynone').onclick = () => { for (const L of LAYERS) setLay(L.key, false, true); store.set('kaunas-obj-lay', Object.assign({}, S.lay, { iso: S.iso.on })); };
   }
 
-  // ---------- selected objects (destinations the viewer picks)
+  // ---------- my objects (destinations the viewer keeps: schools, kindergartens or any spot such as work)
+  const KIND_TXT = { s: 'mokykla', k: 'darželis', c: 'vieta' };
   function loadPinned() {
-    const names = store.get('kaunas-obj-pin', []);
-    pinned = names.map((n) => D.edu.find((e) => e[1] === n)).filter(Boolean).map((e) => Object.assign(E.toWorld(e[2] * 1e-5, e[3] * 1e-5), { name: e[1], kind: e[0] }));
+    let list = store.get('kaunas-obj-mine', null);
+    if (!Array.isArray(list)) {   // older versions kept only school names
+      list = (store.get('kaunas-obj-pin', []) || []).map((n) => D.edu.find((e) => e[1] === n)).filter(Boolean).map((e) => ({ name: e[1], kind: e[0], lon: e[2] * 1e-5, lat: e[3] * 1e-5 }));
+    }
+    pinned = list.filter((o) => o && isFinite(o.lon) && isFinite(o.lat)).map((o) => Object.assign(E.toWorld(o.lon, o.lat), { name: String(o.name || 'Vieta'), kind: o.kind || 'c', lon: o.lon, lat: o.lat }));
   }
-  function savePinned() { store.set('kaunas-obj-pin', pinned.map((p) => p.name)); if (map) map.getSource('edu').setData(eduGeo()); renderPinned(); }
+  function mineGeo() { return FC(pinned.filter((p) => p.kind === 'c').map((p, i) => ({ type: 'Feature', properties: { i: pinned.indexOf(p), img: 'ic-pin' }, geometry: { type: 'Point', coordinates: [p.lon, p.lat] } }))); }
+  function savePinned() {
+    store.set('kaunas-obj-mine', pinned.map((p) => ({ name: p.name, kind: p.kind, lon: +p.lon.toFixed(6), lat: +p.lat.toFixed(6) })));
+    if (map) { map.getSource('edu').setData(eduGeo()); map.getSource('mine').setData(mineGeo()); }
+    renderPinned();
+  }
+  function addPinned(it, kind) {
+    if (pinned.some((q) => q.name === it.name && Math.hypot(q.x - it.x, q.y - it.y) < 30)) return;
+    const ll = toLL(it); pinned.push({ x: it.x, y: it.y, lon: ll[0], lat: ll[1], name: it.name, kind }); savePinned();
+  }
+  function removePinned(it) { const i = pinned.findIndex((q) => q.name === it.name && Math.hypot(q.x - it.x, q.y - it.y) < 30); if (i >= 0) { pinned.splice(i, 1); savePinned(); } }
+  const isPinned = (it) => pinned.some((q) => q.name === it.name && Math.hypot(q.x - it.x, q.y - it.y) < 30);
   const shortName = (n) => n.replace(/^Kauno (r\. )?/, '').replace(/lopšelis-darželis/i, 'darželis');
   function renderPinned() {
-    const box = $('#pinned');
-    box.innerHTML = pinned.length ? pinned.map((p, i) => `<span class="pchip"><button class="chipbtn" data-pb="${i}" title="Padaryti tašku B">${esc(shortName(p.name))}</button><button class="x" data-pr="${i}" aria-label="Pašalinti ${esc(p.name)}">×</button></span>`).join('') : '<span class="tipnote">Spustelėk darželį ar mokyklą žemėlapyje ir pasirink „Pridėti prie pasirinktų“. Tada taškų ir skelbimų kortelėse matysi kelionės laiką iki jų.</span>';
-    box.querySelectorAll('[data-pb]').forEach((b) => b.onclick = () => { const p = pinned[+b.dataset.pb]; if (!S.route) setRoute(true); setPoint('B', p.x, p.y, p.name); if (S.A) fitPoints(); else flyToW(p, 14); });
-    box.querySelectorAll('[data-pr]').forEach((b) => b.onclick = () => { pinned.splice(+b.dataset.pr, 1); savePinned(); refreshCardTimes(); });
+    const box = $('#mine'); if (!box) return;
+    $('#mineempty').hidden = pinned.length > 0;
+    const tm = (p) => { const r = timesAt(p.x, p.y); if (!r) return ''; return `${originLabel()}: auto ${r.car ? Math.round(r.car.t) + ' min' : '-'}, VT ${r.pt ? Math.round(r.pt.t) + ' min' : '-'}`; };
+    box.innerHTML = pinned.map((p, i) => `<li><span class="dot ${p.kind}"></span><div style="min-width:0"><input value="${esc(p.name)}" data-mn="${i}" aria-label="Pavadinimas" title="${esc(p.name)}"><div class="t">${esc(KIND_TXT[p.kind] || '')}${tm(p) ? ' · ' + tm(p) : ''}</div></div><div class="acts"><button data-mv="${i}" title="Rodyti žemėlapyje">Rodyti</button><button data-mb="${i}" title="Padaryti tašku B">B</button><button data-mo="${i}" title="Skaičiuoti zonas nuo čia">Centras</button><button class="x" data-mr="${i}" aria-label="Pašalinti ${esc(p.name)}">×</button></div></li>`).join('');
+    box.querySelectorAll('[data-mn]').forEach((inp) => inp.addEventListener('change', () => { const p = pinned[+inp.dataset.mn]; const v = inp.value.trim(); if (v) { p.name = v; savePinned(); } else inp.value = p.name; }));
+    box.querySelectorAll('[data-mv]').forEach((b) => b.onclick = () => { const p = pinned[+b.dataset.mv]; flyToW(p, 14); if (isPhone()) document.body.classList.add('panel-off'); });
+    box.querySelectorAll('[data-mb]').forEach((b) => b.onclick = () => { const p = pinned[+b.dataset.mb]; if (!S.route) setRoute(true); setPoint('B', p.x, p.y, p.name); openSec('sec-route'); if (S.A) fitPoints(); else flyToW(p, 14); });
+    box.querySelectorAll('[data-mo]').forEach((b) => b.onclick = () => { const p = pinned[+b.dataset.mo]; S.O = { x: p.x, y: p.y, name: p.name, custom: true }; store.set('kaunas-laikas-o', S.O); renderOrigin(); syncMarkers(); selectOrigin('O'); });
+    box.querySelectorAll('[data-mr]').forEach((b) => b.onclick = () => { pinned.splice(+b.dataset.mr, 1); savePinned(); refreshCardTimes(); if (S.card) renderCard(); });
+    setSx('mine', pinned.length ? String(pinned.length) : '');
+  }
+
+  function updatePinnedTimes() {
+    const box = $('#mine'); if (!box) return;
+    box.querySelectorAll('li').forEach((li, i) => { const p = pinned[i]; if (!p) return; const r = timesAt(p.x, p.y), el = li.querySelector('.t'); if (!el) return; const s = (KIND_TXT[p.kind] || '') + (r ? ` · ${originLabel()}: auto ${r.car ? Math.round(r.car.t) + ' min' : '-'}, VT ${r.pt ? Math.round(r.pt.t) + ' min' : '-'}` : ''); if (el.textContent !== s) el.textContent = s; });
+  }
+  // short status shown on collapsed section headers
+  function renderSx() {
+    setSx('time', `${DAYS[S.day]}, ${fmtT(S.t)}`);
+    setSx('iso', S.iso.on ? `${S.iso.mode === 'car' ? 'automobiliu' : 'viešuoju tr.'}, ${originLabel()}` : 'išjungta');
+    setSx('route', S.route && S.A && S.B && S.car ? `${fmtMin(S.car.t)} auto${S.pt ? ', ' + fmtMin(S.pt.t) + ' VT' : ''}` : '');
+    setSx('lay', `${LAYERS.filter((L) => layOn(L.key)).length} įjungta`);
+    setSx('cmp', cmp.length ? String(cmp.length) : '');
+    const n = LST.filter((l) => l.lon != null).length; setSx('imp', n ? `${n} ${lstWord(n)}` : '');
+  }
+  // ---------- collapsible panel sections
+  function setSx(k, txt) { const el = document.getElementById('sx-' + k); if (el && el.textContent !== txt) el.textContent = txt; }
+  function openSec(id) { const d = document.getElementById(id); if (d && !d.open) d.open = true; }
+  function wireSections() {
+    const st = store.get('kaunas-obj-open', {}) || {};
+    document.querySelectorAll('details.sec').forEach((d) => {
+      if (typeof st[d.id] === 'boolean') d.open = st[d.id];
+      else if (isPhone() && d.id !== 'sec-time' && d.id !== 'sec-mine') d.open = false;
+      d.addEventListener('toggle', () => { const s = store.get('kaunas-obj-open', {}) || {}; s[d.id] = d.open; store.set('kaunas-obj-open', s); });
+    });
   }
 
   // ---------- hover tooltip and cards
@@ -1446,13 +1645,14 @@ if (typeof module !== 'undefined') module.exports = Engine;
   }
   const tline = (lbl, cls, v, pm) => `<div class="tl"><i class="${cls}"></i><span class="tn">${lbl}</span><b>${v != null ? '≈ ' + Math.round(v) + ' min' : '-'}</b><span class="pm">${v != null && pm ? '±' + pm : ''}</span></div>`;
   function tipHTML(r) { return `<div class="th">${originLabel()}, ${fmtT(S.t)}</div>` + tline('Automobiliu', 'c', r.car && r.car.t, r.car && r.car.pm) + tline('Viešuoju tr.', 'p', r.pt && r.pt.t, r.pt && r.pt.pm); }
-  const HIT = ['lst', 'pinned', 'edu', 'kg', 'edup', 'kgp', 'edu-dot', 'kg-dot', 'edup-dot', 'kgp-dot'];
+  const HIT = ['lst', 'mine', 'pinned', 'edu', 'kg', 'edup', 'kgp', 'edu-dot', 'kg-dot', 'edup-dot', 'kgp-dot'];
   function hitAt(point) {
     const layers = HIT.filter((id) => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
     const f = map.queryRenderedFeatures([[point.x - 7, point.y - 7], [point.x + 7, point.y + 7]], { layers });
     if (!f.length) return null;
     const o = f[0];
     if (o.layer.id === 'lst') return { type: 'lst', item: LST[o.properties.k] };
+    if (o.layer.id === 'mine') { const p = pinned[o.properties.i]; return p ? { type: 'mine', item: p } : null; }
     const e = D.edu[o.properties.i]; return { type: 'edu', item: Object.assign(E.toWorld(e[2] * 1e-5, e[3] * 1e-5), { kind: e[0], name: e[1], own: e[4] || 'v' }) };
   }
   let hoverRAF = 0, hoverEv = null;
@@ -1493,7 +1693,10 @@ if (typeof module !== 'undefined') module.exports = Engine;
     let h = '';
     if (c.type === 'probe') {
       const r = timesAt(c.item.x, c.item.y);
-      h = `<div class="ch"><b>${esc(c.item.name)}</b>${close}</div>${r ? tipHTML(r) : '<div class="th">Už žemėlapio ribų</div>'}${pinned.length ? '<div class="th">Iki pasirinktų objektų</div><div id="cardtimes"><div class="th">Skaičiuojama…</div></div>' : ''}${acts()}`;
+      h = `<div class="ch"><b>${esc(c.item.name)}</b>${close}</div>${r ? tipHTML(r) : '<div class="th">Už žemėlapio ribų</div>'}${pinned.length ? '<div class="th">Iki mano objektų</div><div id="cardtimes"><div class="th">Skaičiuojama…</div></div>' : ''}${acts('<button class="linkbtn" data-c="pinc">Į mano objektus</button>')}`;
+    } else if (c.type === 'mine') {
+      const p = c.item;
+      h = `<div class="ch"><b>${esc(p.name)}</b>${close}</div><div class="facts">Mano objektas</div>${(() => { const r = timesAt(p.x, p.y); return r ? tipHTML(r) : ''; })()}${acts('<button class="linkbtn" data-c="unpin">Pašalinti iš mano objektų</button>')}`;
     } else if (c.type === 'lst') {
       const l = c.item;
       const facts = [l.m2 ? `${Math.round(l.m2)} m²` : null, l.lot != null ? `${String(l.lot).replace('.', ',')} a sklypas` : null, l.rooms ? `${l.rooms} kamb.` : null, l.year ? `${l.year} m.` : null, l.extra || null].filter(Boolean).map(esc).join(' · ');
@@ -1501,18 +1704,20 @@ if (typeof module !== 'undefined') module.exports = Engine;
       h = `<div class="ch"><b>${esc(l.addr)}</b>${close}</div>${l.title ? `<div class="ttl">${esc(l.title)}</div>` : ''}
         <div class="price">${l.price ? fmtEur(l.price) : 'Kaina nenurodyta'} ${l.price && l.m2 ? `<span>${Math.round(l.price / l.m2).toLocaleString('lt-LT')} €/m²</span>` : ''}</div>${facts ? `<div class="facts">${facts}</div>` : ''}
         ${l.gq === 1 ? '<div class="th">Vieta apytikslė: pagal gyvenvietę, ne gatvę</div>' : ''}
-        ${pinned.length ? `<div class="th">Iki pasirinktų objektų, ${DAYS[S.day].toLowerCase()}, ${fmtT(S.t)}</div><div id="cardtimes"><div class="th">Skaičiuojama…</div></div>` : '<div class="th">Pridėk objektų prie „Pasirinkti objektai“, kad matytum kelionės laikus iki jų.</div>'}
+        ${pinned.length ? `<div class="th">Iki mano objektų, ${DAYS[S.day].toLowerCase()}, ${fmtT(S.t)}</div><div id="cardtimes"><div class="th">Skaičiuojama…</div></div>` : '<div class="th">Pridėk darželių, mokyklų ar darbo vietą į „Mano objektus“, kad matytum kelionės laikus iki jų.</div>'}
         ${acts(l.url ? `<a class="linkbtn" href="${esc(l.url)}" target="_blank" rel="noopener">Skelbimas${srcName ? ' (' + srcName + ')' : ''}</a>` : '')}
         ${l.when ? `<div class="th">Įkeltas ar atnaujintas: ${esc(l.when)}</div>` : ''}`;
     } else if (c.type === 'edu') {
-      const p = c.item, isPin = pinned.some((q) => q.name === p.name);
-      h = `<div class="ch"><b>${esc(p.name)}</b>${close}</div><div class="facts">${p.kind === 's' ? (p.own === 'p' ? 'Privati mokykla' : 'Valstybinė ar savivaldybės mokykla') : (p.own === 'p' ? 'Privatus darželis' : 'Valstybinis ar savivaldybės darželis')}</div>${acts(`<button class="linkbtn" data-c="pin">${isPin ? 'Pašalinti iš pasirinktų' : 'Pridėti prie pasirinktų'}</button>`)}`;
+      const p = c.item, isPin = isPinned(p);
+      h = `<div class="ch"><b>${esc(p.name)}</b>${close}</div><div class="facts">${p.kind === 's' ? (p.own === 'p' ? 'Privati mokykla' : 'Valstybinė ar savivaldybės mokykla') : (p.own === 'p' ? 'Privatus darželis' : 'Valstybinis ar savivaldybės darželis')}</div>${acts(`<button class="linkbtn" data-c="pin">${isPin ? 'Pašalinti iš mano objektų' : 'Į mano objektus'}</button>`)}`;
     }
     box.innerHTML = h; box.hidden = false;
     box.querySelectorAll('[data-c]').forEach((b) => b.onclick = () => {
       const it = c.item, a = b.dataset.c, name = it.addr || it.name;
       if (a === 'close') closeCard();
-      else if (a === 'pin') { const i = pinned.findIndex((q) => q.name === it.name); if (i >= 0) pinned.splice(i, 1); else pinned.push({ x: it.x, y: it.y, name: it.name, kind: it.kind }); savePinned(); renderCard(); }
+      else if (a === 'pin') { if (isPinned(it)) removePinned(it); else addPinned(it, it.kind); openSec('sec-mine'); renderCard(); refreshCardTimes(); }
+      else if (a === 'pinc') { addPinned(it, 'c'); openSec('sec-mine'); closeCard(); }
+      else if (a === 'unpin') { removePinned(it); closeCard(); }
       else if (a === 'origin') { S.O = { x: it.x, y: it.y, name, custom: true }; store.set('kaunas-laikas-o', S.O); renderOrigin(); syncMarkers(); selectOrigin('O'); closeCard(); }
       else { if (!S.route) setRoute(true); setPoint(a, it.x, it.y, name); closeCard(); if (S.A && S.B) fitPoints(); }
     });
@@ -1569,9 +1774,10 @@ if (typeof module !== 'undefined') module.exports = Engine;
     $('#congbar').style.transform = `scaleX(${Math.min(100, c) / 100})`;
     document.querySelectorAll('[data-day]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.day === S.day));
     document.querySelectorAll('[data-t]').forEach((b) => b.setAttribute('aria-pressed', +b.dataset.t === S.t));
-    renderProfileMarker();
+    renderProfileMarker(); renderSx();
   }
   function renderResults() {
+    renderSx();
     const car = $('#rcar'), pt = $('#rpt'), legs = $('#legs');
     if (!S.A || !S.B) { car.querySelector('.big').textContent = '-'; pt.querySelector('.big').textContent = '-'; car.querySelector('.sub').textContent = !S.A ? 'Pažymėk tašką A' : 'Pažymėk tašką B'; pt.querySelector('.sub').textContent = ''; legs.innerHTML = ''; return; }
     if (S.car) {
@@ -1622,6 +1828,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
   }
   let cmp = [], cmpSeq = 0;
   function renderCompare() {
+    renderSx();
     const tb = $('#cmpbody'); tb.innerHTML = '';
     $('#cmpempty').hidden = cmp.length > 0; $('#cmptable').hidden = cmp.length === 0;
     const jobs = [];
@@ -1731,7 +1938,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     $('#isoon').addEventListener('change', (ev) => setLay('iso', ev.target.checked));
     document.querySelectorAll('[data-imode]').forEach((b) => b.onclick = () => { S.iso.mode = b.dataset.imode; document.querySelectorAll('[data-imode]').forEach((x) => x.setAttribute('aria-pressed', x === b)); computeIso(); });
     document.querySelectorAll('[data-iorig]').forEach((b) => b.onclick = () => selectOrigin(b.dataset.iorig));
-    renderLayers(); wireImport();
+    renderLayers(); wireImport(); wireSections();
     // theme: only rebuild colours when they really change
     let lastSig = JSON.stringify(colors);
     const re = () => { const c = readColors(), sig = JSON.stringify(c); if (sig === lastSig) return; lastSig = sig; applyTheme(); };
@@ -1747,6 +1954,10 @@ if (typeof module !== 'undefined') module.exports = Engine;
     $('#busy').hidden = true; recomputeAll(); renderCompare();
     restoreListings();
     if (pendingImport) { importText(pendingImport, 'aruodas'); pendingImport = null; }
+    // keep a saved search fresh: refetch quietly when it is older than 6 hours
+    const s = store.get('kaunas-obj-search', null);
+    $('#imprefresh').hidden = !(PROXY && s && s.url);
+    if (PROXY && s && s.url && LST.length && Date.now() - Date.parse(s.at || 0) > 6 * 3600e3) fetchSearch(s.url, true);
   }
 
   async function fetchText(url) {
@@ -1790,7 +2001,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     cmp = store.get('kaunas-laikas-cmp', []);
     S.O = store.get('kaunas-laikas-o', null) || defaultOrigin();
     loadPinned();
-    const G0 = buildGeo(); const DBG = (location.hash || '').slice(1).split(',').filter(Boolean); for (const k of DBG) if (G0[k]) G0[k] = EMPTY;
+    const G0 = buildGeo();
     map = new ML.Map({
       container: 'map', style: buildStyle(G0), center: [23.92, 54.895], zoom: 10.7, minZoom: 8.6, maxZoom: 17.5,
       maxBounds: [[22.9, 54.45], [24.9, 55.45]], attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false,
@@ -1817,11 +2028,6 @@ if (typeof module !== 'undefined') module.exports = Engine;
   }
   start();
 })();
-
-</script>
-
-<script>
-if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
 </html>
