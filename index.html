@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>body{margin:0;padding:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px)}</style>
 <script src="config.js"></script>
-<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=c768011c';
+<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=3cab8059';
 if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </head>
 <body>
@@ -401,7 +401,7 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
     <details class="sec" id="sec-notes">
       <summary><h2>Kaip skaičiuojama</h2></summary>
       <div class="secb notes">
-        <p><b>Automobilis.</b> Maršrutas ieškomas OpenStreetMap kelių tinkle (Geofabrik, 2026-11-03 duomenys). Laisvo eismo greitis pagal kelio klasę ir leistiną greitį, mieste sumažintas dėl sankryžų ir šviesoforų. Kamščiai pridedami pagal paros laiką: kreivė pritaikyta prie TomTom Traffic Index 2025 Kaunui (rytinis piko laikas vidutiniškai +71 %, vakarinis +82 %, naktį beveik laisva).</p>
+        <p><b>Automobilis.</b> Maršrutas ieškomas OpenStreetMap kelių tinkle (Geofabrik, 2026-11-03 duomenys). Greitis pagal kelio klasę ir leistiną greitį: aplinkkeliuose ir magistralėse pagal Kelių direkcijos (eismoinfo.lt) detektorių matuojamą greitį, miesto gatvėse sumažintas dėl sankryžų ir šviesoforų. Kamščiai pridedami pagal paros laiką (kreivės forma pagal TomTom Traffic Index 2025 Kaunui) ir kryptį: ryte stringa važiuojant į miestą, vakare iš miesto. Modelis sutikrintas su realiai važiuojamu maršrutu Kalniečiai → Ilgakiemis 08:25 (apie 23 min).</p>
         <p><b>Viešasis transportas.</b> Tikras Kauno viešojo transporto (KVT) GTFS tvarkaraštis, galiojantis nuo 2026-10-24. Laikas skaičiuojamas nuo išvykimo: ėjimas iki stotelės, laukimas, važiavimas, persėdimai (bent 2 min) ir ėjimas iki tikslo. Ėjimas iki 1,2 km.</p>
         <ul>
           <li>Tai modelis, ne gyvas eismas: avarijos, remontai ir oras nerodomi. Piko metu realus laikas gali skirtis maždaug ±20 %.</li>
@@ -647,9 +647,11 @@ const Engine = (function () {
 
   // class order: motorway, trunk, primary, secondary, tertiary, unclassified, residential, living_street
   const LIM_U = [110, 70, 50, 50, 50, 50, 40, 20], LIM_R = [110, 90, 90, 90, 70, 60, 40, 20];
-  const F_U = [.85, .9, .95, .92, .86, .78, .7, .6], F_R = [.8, .86, .88, .86, .82, .76, .66, .55];
-  const W_U = [.8, .95, 1.15, 1.1, .95, .6, .35, .2], W_R = [.25, .35, .35, .25, .15, .08, .05, .05];
+  const F_U = [1.0, 1.0, .95, .92, .86, .78, .7, .6], F_R = [1.03, 1.03, 1.0, .97, .92, .82, .68, .55];   // LAKD detectors on A5/A6/141: off-peak traffic runs at or slightly over the limit
+  const W_U = [.35, .4, 1.15, 1.1, .95, .6, .35, .2], W_R = [.15, .2, .3, .25, .15, .08, .05, .05];   // bypasses and trunk roads keep flowing, the slowdown is at lights on city arterials
 
+  // calibration: urban free-flow factor and traffic weight scale (set from drive-time checks)
+  const CAL = { fu: 1, w: 0.85 };
   let D, G = {};
 
   function build(data) {
@@ -668,17 +670,23 @@ const Engine = (function () {
       const c = e.c[i], urb = e.urb[i];
       let lim = e.ms[i] > 0 ? e.ms[i] : (urb ? LIM_U : LIM_R)[c];
       if (c === 0) lim = Math.min(lim, 130);
-      let v = lim * (urb ? F_U : F_R)[c];
+      let v = lim * Math.min(1.05, (urb ? F_U : F_R)[c] * (urb ? CAL.fu : 1));
       if (e.l[i]) v = Math.min(v, urb ? 35 : 45);
       v = Math.max(v, 8);
       G.base[i] = e.len[i] / (v * 1000 / 60);
-      let w = (urb ? W_U : W_R)[c];
+      let w = (urb ? W_U : W_R)[c] * CAL.w;
       if (!urb) {
         const mx = (G.nx[e.u[i]] + G.nx[e.v[i]]) / 2, my = (G.ny[e.u[i]] + G.ny[e.v[i]]) / 2;
         const dc = Math.hypot(mx - cx.x, my - cx.y);
-        if (dc < 15000 && c <= 3) w *= 1.8;   // approach roads into the city queue at the edge in rush hour
+        if (dc < 15000 && c <= 3) w *= 1.2;   // approach roads into the city queue at the edge in rush hour
       }
       G.w[i] = w;
+    }
+    G.inb = new Int8Array(nE); G.fade = new Float32Array(nE);
+    for (let i = 0; i < nE; i++) {
+      const du = Math.hypot(G.nx[e.u[i]] - cx.x, G.ny[e.u[i]] - cx.y), dv = Math.hypot(G.nx[e.v[i]] - cx.x, G.ny[e.v[i]] - cx.y);
+      G.inb[i] = dv < du - 5 ? 1 : dv > du + 5 ? -1 : 0;
+      G.fade[i] = Math.min(1, Math.max(0, ((du + dv) / 2 - 1500) / 3000));
     }
     // CSR adjacency
     const deg = new Int32Array(nN + 1);
@@ -757,7 +765,16 @@ const Engine = (function () {
     return best;
   }
 
-  function edgeCost(i, day, t) { return G.base[i] * (1 + congestion(day, t) * G.w[i]); }
+  // Rush hour is one-directional: in the morning traffic queues into the city, in the evening out of it.
+  // from = the node the edge is entered from; the factor fades out near the centre where direction means little.
+  function dirMul(i, from, day, t) {
+    const f = G.fade[i]; if (!f || from == null || day !== 'wd') return 1;
+    const inb = (from === D.e.u[i] ? G.inb[i] : -G.inb[i]); if (!inb) return 1;
+    const h = ((t % 1440) + 1440) % 1440 / 60, am = Math.exp(-((h - 8) ** 2) / 4.5), pm = Math.exp(-((h - 17) ** 2) / 4.5);
+    const k = inb > 0 ? 1 + f * (0.3 * am - 0.4 * pm) : 1 - f * (0.6 * am - 0.2 * pm);
+    return Math.max(0.3, k);
+  }
+  function edgeCost(i, day, t, from) { return G.base[i] * (1 + congestion(day, t) * G.w[i] * dirMul(i, from, day, t)); }
 
   // time-dependent Dijkstra from a snapped point
   function dijkstra(sp, day, t0, opts = {}) {
@@ -765,7 +782,7 @@ const Engine = (function () {
     const heapN = new Int32Array(G.off[nN] + 16), heapK = new Float64Array(G.off[nN] + 16); let hs = 0;
     function push(n, k) { let i = hs++; while (i > 0) { const p = (i - 1) >> 1; if (heapK[p] <= k) break; heapN[i] = heapN[p]; heapK[i] = heapK[p]; i = p; } heapN[i] = n; heapK[i] = k; }
     function pop() { const n = heapN[0], k = heapK[0]; hs--; const ln = heapN[hs], lk = heapK[hs]; let i = 0; while (true) { let c = 2 * i + 1; if (c >= hs) break; if (c + 1 < hs && heapK[c + 1] < heapK[c]) c++; if (heapK[c] >= lk) break; heapN[i] = heapN[c]; heapK[i] = heapK[c]; i = c; } heapN[i] = ln; heapK[i] = lk; return [n, k]; }
-    const e = D.e, acc = sp.d / ACCESS, c0 = edgeCost(sp.e, day, t0);
+    const e = D.e, acc = sp.d / ACCESS, c0 = edgeCost(sp.e, day, t0);   // start edge: direction neutral
     if (e.ow[sp.e] !== 2) { const k = acc + (1 - sp.f) * c0; if (k < dist[e.v[sp.e]]) { dist[e.v[sp.e]] = k; pe[e.v[sp.e]] = -2; push(e.v[sp.e], k); } }
     if (e.ow[sp.e] !== 1) { const k = acc + sp.f * c0; if (k < dist[e.u[sp.e]]) { dist[e.u[sp.e]] = k; pe[e.u[sp.e]] = -2; push(e.u[sp.e], k); } }
     const tgt = opts.target, maxT = opts.maxT || Infinity; let tgtLeft = tgt ? 2 : 0;
@@ -775,7 +792,7 @@ const Engine = (function () {
       if (tgt && tgtLeft <= 0) break;
       const t = t0 + k;
       for (let a = G.off[n]; a < G.off[n + 1]; a++) {
-        const m = G.ahead[a], ed = G.aedge[a], nk = k + edgeCost(ed, day, t);
+        const m = G.ahead[a], ed = G.aedge[a], nk = k + edgeCost(ed, day, t, n);
         if (nk < dist[m]) { dist[m] = nk; pe[m] = ed; push(m, nk); }
       }
     }
@@ -783,7 +800,7 @@ const Engine = (function () {
   }
 
   function arriveAt(res, tp, day, t0) {
-    const e = D.e, c = (n) => edgeCost(tp.e, day, t0 + res.dist[n]);
+    const e = D.e, c = (n) => edgeCost(tp.e, day, t0 + res.dist[n], n);
     let best = Infinity, via = -1;
     if (e.ow[tp.e] !== 2) { const k = res.dist[e.u[tp.e]] + tp.f * c(e.u[tp.e]); if (k < best) { best = k; via = e.u[tp.e]; } }
     if (e.ow[tp.e] !== 1) { const k = res.dist[e.v[tp.e]] + (1 - tp.f) * c(e.v[tp.e]); if (k < best) { best = k; via = e.v[tp.e]; } }
@@ -937,8 +954,8 @@ const Engine = (function () {
     for (let k = 0; k < out.length; k++) {
       const ed = gr.ce[k]; if (ed < 0) continue;
       let best = Infinity; const u = e.u[ed], v = e.v[ed];
-      if (e.ow[ed] !== 2 && isFinite(res.dist[u])) best = Math.min(best, res.dist[u] + gr.cf[k] * edgeCost(ed, day, t0 + res.dist[u]));
-      if (e.ow[ed] !== 1 && isFinite(res.dist[v])) best = Math.min(best, res.dist[v] + (1 - gr.cf[k]) * edgeCost(ed, day, t0 + res.dist[v]));
+      if (e.ow[ed] !== 2 && isFinite(res.dist[u])) best = Math.min(best, res.dist[u] + gr.cf[k] * edgeCost(ed, day, t0 + res.dist[u], u));
+      if (e.ow[ed] !== 1 && isFinite(res.dist[v])) best = Math.min(best, res.dist[v] + (1 - gr.cf[k]) * edgeCost(ed, day, t0 + res.dist[v], v));
       if (sp.e === ed) best = Math.min(best, Math.abs(gr.cf[k] - sp.f) * G.base[ed]);
       if (isFinite(best)) out[k] = best + gr.cd[k] / ACCESS + sp.d / ACCESS;
     }
@@ -961,7 +978,7 @@ const Engine = (function () {
     return out;
   }
 
-  return { build, G: () => G, D: () => D, toWorld, toLonLat, edgePts, snap, carRoute, transitRoute, carGrid, transitGrid, gridInit, congestion, CENTER, WALK, edgeCost };
+  return { CAL, build, G: () => G, D: () => D, toWorld, toLonLat, edgePts, snap, carRoute, transitRoute, carGrid, transitGrid, gridInit, congestion, CENTER, WALK, edgeCost };
 })();
 if (typeof module !== 'undefined') module.exports = Engine;
 </script>
