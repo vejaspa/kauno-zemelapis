@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>body{margin:0;padding:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px)}</style>
 <script src="config.js"></script>
-<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=2dc60676';
+<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=d7026b0b';
 if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </head>
 <body>
@@ -209,7 +209,8 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
 /* my objects */
 .mine { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; background: var(--panel); border-radius: 12px; overflow: hidden; }
 .mine:empty { display: none; }
-.mine li { display: grid; grid-template-columns: 10px 1fr auto; gap: 10px; align-items: center; padding: 9px 12px; border-bottom: .5px solid var(--line); }
+.mine li { display: grid; grid-template-columns: 10px 1fr; gap: 2px 10px; align-items: start; padding: 9px 12px; border-bottom: .5px solid var(--line); }
+.mine li .dot { margin-top: 7px; } .mine li .acts { grid-column: 2; margin-left: -6px; }
 .mine li:last-child { border-bottom: 0; }
 .mine .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--pin); }
 .mine .dot.s { background: var(--edu); border-radius: 3px; } .mine .dot.k { background: var(--kg); }
@@ -241,6 +242,20 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
 #impsec.drop { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 12px; }
 .impsum { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--panel); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; }
 
+/* search */
+.search { position: relative; display: flex; align-items: center; }
+.search svg { position: absolute; left: 11px; width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
+.search input { width: 100%; font: 400 15px var(--ff); color: var(--fg); background: var(--chip); border: 0; border-radius: 12px; padding: 10px 12px 10px 34px; transition: box-shadow .2s, background .2s; }
+.search input:focus { outline: none; background: var(--panel); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
+.pclose { position: absolute; right: 12px; top: 14px; width: 30px; height: 30px; border: 0; border-radius: 50%; background: var(--chip); color: var(--muted); cursor: pointer; display: grid; place-items: center; padding: 0; transition: background .2s; }
+.pclose:hover { background: var(--hover); color: var(--fg); }
+.pclose svg { width: 16px; height: 16px; }
+.panel { position: absolute; }
+body.panel-off .panel { transform: translateX(calc(-100% - 24px)); opacity: 0; pointer-events: none; }
+body.panel-off .pickbar { left: 12px; }
+body.panel-off #panelbtn { display: block; }
+#panelbtn { position: absolute; left: 12px; bottom: 30px; z-index: 3; border: .5px solid var(--hair); background: var(--glass-strong); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); color: var(--fg); font: 600 14px var(--ff); border-radius: 999px; padding: 10px 20px; box-shadow: var(--shadow); cursor: pointer; }
+.pickbar { transition: left .45s var(--ease); }
 /* map overlays */
 .mapui { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); top: 12px; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; z-index: 3; }
 .mapui button { min-width: 44px; padding: 0 10px; height: 40px; border: 0; border-bottom: .5px solid var(--line); background: transparent; color: var(--fg); font: 400 20px var(--ff); cursor: pointer; transition: background .2s; }
@@ -314,12 +329,14 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
 #loading { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: var(--land); color: var(--muted); font-size: 15px; padding: 20px; text-align: center; }
 .attr { position: absolute; right: 8px; bottom: 6px; font-size: 10.5px; color: var(--muted); background: var(--glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding: 2px 7px; border-radius: 6px; }
 #busy { position: absolute; left: calc(50% + 192px); bottom: 34px; transform: translateX(-50%); z-index: 3; color: var(--fg); font: 500 13px var(--ff); padding: 8px 14px; border-radius: 999px; pointer-events: none; }
-#panelbtn, .panelhide { display: none; }
+.panelhide { display: none; } #panelbtn { display: none; }
 /* Phones: the map fills the screen; the panel is a sheet over it that can be hidden. */
 @media (max-width: 820px) {
   html, body { height: 100%; overflow: hidden; }
   .app { height: 100vh; height: 100dvh; }
-  .panel { position: fixed; left: 0; right: 0; top: auto; bottom: 0; width: auto; z-index: 5; max-height: 78vh; max-height: 78dvh; border-radius: 22px 22px 0 0; border-bottom: 0;
+  .pclose { display: none; }
+  body.panel-off .pickbar { left: 10px; }
+  .panel { position: fixed; left: 0; right: 0; top: auto; bottom: 0; width: auto; z-index: 5; opacity: 1 !important; pointer-events: auto !important; max-height: 78vh; max-height: 78dvh; border-radius: 22px 22px 0 0; border-bottom: 0;
     padding-top: 0; padding-right: max(14px, env(safe-area-inset-right, 0px)); padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)); }
   body.panel-off .panel { transform: translateY(105%); visibility: hidden; transition: transform .45s var(--ease), visibility 0s .45s; }
   .panelhide { display: flex; position: sticky; top: 0; z-index: 2; justify-content: center; padding: 8px 0 4px; margin: 0 -14px; background: linear-gradient(var(--glass-strong), transparent); }
@@ -341,11 +358,14 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
 <div class="app">
   <aside class="panel glass" id="panel">
     <div class="panelhide"><button id="panelhide">Rodyti žemėlapį</button></div>
+    <button class="pclose" id="pclose" aria-label="Paslėpti meniu" title="Paslėpti meniu"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <header>
       <div class="eyebrow">Kaunas ir Kauno rajonas</div>
       <h1>Kur gyventi Kaune</h1>
       <p>Kelionės laikas pagal paros metą, darželiai, mokyklos, gamta ir tavo skelbimai.</p>
     </header>
+
+    <div class="search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 13l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="find" list="places" placeholder="Ieškoti gatvės, gyvenvietės, darželio" autocomplete="off" aria-label="Ieškoti vietos"></div>
 
     <details class="sec" id="sec-time" open>
       <summary><h2>Kada važiuoji</h2><span class="sx" id="sx-time"></span></summary>
@@ -474,7 +494,7 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
       <summary><h2>Kaip skaičiuojama</h2></summary>
       <div class="secb notes">
         <p><b>Automobilis.</b> Maršrutas ieškomas OpenStreetMap kelių tinkle (Geofabrik, 2026-11-03 duomenys). Greitis pagal kelio klasę ir leistiną greitį: aplinkkeliuose ir magistralėse pagal Kelių direkcijos (eismoinfo.lt) detektorių matuojamą greitį, miesto gatvėse sumažintas dėl sankryžų ir šviesoforų. Kamščiai pridedami pagal paros laiką (kreivės forma pagal TomTom Traffic Index 2025 Kaunui) ir kryptį: ryte stringa važiuojant į miestą, vakare iš miesto. Priemiesčiai, iš kurių yra tik vienas ar du išvažiavimai (Užliedžiai ir Giraitė, Akademija ir Ringaudai, Raudondvaris, Garliava, Domeikava, Saliai ir Smiltynai), gauna papildomą eilę prie išvažiavimo: ryte išvažiuojant iš rajono, vakare įvažiuojant į jį. Apvažiuoti jos negalima, todėl ji pridedama visiems tokiems maršrutams; kas važiuoja magistrale ar plentu pro šalį, jos negauna. Pagal Kelių direkcijos detektorius ir vietinius pastebėjimus sulėtinti ir keli magistralių ruožai: A5 nuo Akademijos ir Lampėdžių link Megos ryte (iki maždaug 30 km/h prie Megos), A6 iš Kauno link Karmėlavos ryte ir vakare (apie 40 km/h). Modelis sutikrintas su realiai važiuojamu maršrutu Kalniečiai → Ilgakiemis 08:25 (apie 23 min) ir su Google įprastų laikų intervalais Užliedžiai ↔ Murava. Maršruto kortelėje rodoma ir „blogos dienos“ trukmė, maždaug kaip viršutinė Google intervalo riba.</p>
-        <p><b>Viešasis transportas.</b> Tikras Kauno viešojo transporto (KVT) GTFS tvarkaraštis, galiojantis nuo 2026-10-24. Laikas skaičiuojamas nuo išvykimo: ėjimas iki stotelės, laukimas, važiavimas, persėdimai (bent 2 min) ir ėjimas iki tikslo. Ėjimas iki 1,2 km.</p>
+        <p><b>Viešasis transportas.</b> Tikras Kauno viešojo transporto (KVT) GTFS tvarkaraštis, galiojantis nuo 2026-10-24. Laikas skaičiuojamas kaip Google ar Trafi kelionė: išeini taip, kad spėtum į pirmą reisą po pasirinkto laiko, todėl laukimas pirmoje stotelėje neįskaičiuotas (maršruto kortelėje parodoma, kada išeiti). Įskaičiuota: ėjimas iki stotelės, važiavimas, persėdimai su laukimu (bent 2 min) ir ėjimas iki tikslo. Jei autobusas važiuoja retai, kortelėje matysi, kiek vėliau reikia išeiti. Ėjimas iki 1,2 km.</p>
         <ul>
           <li>Tai modelis, ne gyvas eismas: avarijos, remontai ir oras nerodomi. Piko metu realus laikas gali skirtis maždaug ±20 %.</li>
           <li>Tvarkaraštyje yra tik miesto (KVT) maršrutai, įskaitant priemiesčius kaip Garliava, Domeikava, Raudondvaris, Ringaudai, Vaišvydava. Privačių priemiestinių autobusų nėra, todėl dalyje rajono VT laikas per ilgas arba jo nėra.</li>
@@ -483,6 +503,7 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
           <li>Mokyklos ir darželiai: OpenStreetMap ir Švietimo, mokslo ir sporto institucijų registras (AIKOS). Registre nurodytas įstaigos adresas, todėl tinklų (pvz. su kitu miestu registruotų) skyriai gali trūkti. Trūkstamą vietą spustelėk žemėlapyje ir pridėk į „Mano objektus“.</li>
           <li>Miškai, parkai, dviračių takai ir keliukai iš OpenStreetMap.</li>
         </ul>
+        <p class="tipnote">Versija 2026-11-10 14:08</p>
         <p>Šaltiniai: <a href="https://download.geofabrik.de/europe/lithuania.html" target="_blank" rel="noopener">OpenStreetMap / Geofabrik</a>, <a href="https://mobilitydatabase.org/feeds/gtfs/mdb-1041" target="_blank" rel="noopener">KVT GTFS</a>, <a href="https://www.tomtom.com/traffic-index/kaunas-traffic" target="_blank" rel="noopener">TomTom Traffic Index</a>, <a href="https://www.aikos.smm.lt/Registrai/Svietimo-ir-mokslo-institucijos" target="_blank" rel="noopener">AIKOS institucijų registras</a>.</p>
       </div>
     </details>
@@ -612,7 +633,7 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
     }
     return { ride: { type: 'MultiLineString', coordinates: ride }, walk: { type: 'MultiLineString', coordinates: walk } };
   }
-  const cleanPt = (r) => r ? { t: r.t, walkOnly: r.walkOnly, legs: r.legs.map((l) => ({ k: l.k, min: l.min, from: l.from, to: l.to, dep: l.dep, at: l.at, route: l.route })) } : null;
+  const cleanPt = (r) => r ? { t: r.t, walkOnly: r.walkOnly, leave: r.leave, legs: r.legs.map((l) => ({ k: l.k, min: l.min, from: l.from, to: l.to, dep: l.dep, at: l.at, route: l.route })) } : null;
 
   self.onmessage = (ev) => {
     const m = ev.data;
@@ -630,7 +651,8 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
         for (let i = 0; i < g.length; i++) vals[i] = -Math.min(g[i], 34);
         const fc = isoBands(vals, grid.nx, grid.ny, grid.gs);
         const img = m.pal ? isoRaster(g, m.pal, m.k || 3) : null;
-        self.postMessage({ type: 'res', id: m.id, data: { car, pt, fc, img, mode: m.mode } }, [car.buffer, pt.buffer].concat(img ? [img.px.buffer] : []));
+        const ptw = pt.foot || null;
+        self.postMessage({ type: 'res', id: m.id, data: { car, pt, ptw, fc, img, mode: m.mode } }, [car.buffer, pt.buffer].concat(ptw ? [ptw.buffer] : [], img ? [img.px.buffer] : []));
       } else if (m.type === 'route') {
         const car = Engine.carRoute(m.A, m.B, m.day, m.t), pt = Engine.transitRoute(m.A, m.B, m.day, m.t), free = Engine.carRoute(m.A, m.B, m.day, 180);
         Engine.setRisk(1); const bad = Engine.carRoute(m.A, m.B, m.day, m.t); Engine.setRisk(0);
@@ -642,7 +664,7 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
       } else if (m.type === 'batch') {
         const out = m.jobs.map((j) => {
           const c = Engine.carRoute(j.a, j.b, j.day, j.t), p = Engine.transitRoute(j.a, j.b, j.day, j.t);
-          return { car: c ? c.t : null, pt: p ? (p.walkOnly && p.t > 40 ? null : p.t) : null };
+          return { car: c ? c.t : null, pt: p ? (p.walkOnly && p.t > 40 ? null : p.t) : null, ptw: !!(p && p.walkOnly) };
         });
         self.postMessage({ type: 'res', id: m.id, data: out });
       } else if (m.type === 'geocode') {
@@ -1029,28 +1051,32 @@ const Engine = (function () {
     const C = G.conn[day], ns = G.ns;
     const arr = new Float64Array(ns).fill(Infinity), ready = new Float64Array(ns).fill(Infinity);
     const prev = new Array(ns).fill(null);
-    for (const [s, d] of stopsNear(a.x, a.y, MAX_WALK)) { const t = t0 + d / WALK; if (t < arr[s]) { arr[s] = t; ready[s] = t; prev[s] = { k: 'walk0', d }; } }
-    const on = new Int8Array(C.nt), bStop = new Int32Array(C.nt), bTime = new Int32Array(C.nt);
+    // start[s] = when you leave the origin on the journey that reaches s. Leaving is timed for the first vehicle,
+    // so the wait at the first stop does not count (that is how Google or Trafi show a trip); waits at transfers do.
+    const start = new Float64Array(ns).fill(t0), w0 = new Float64Array(ns).fill(-1);
+    for (const [s, d] of stopsNear(a.x, a.y, MAX_WALK)) { const t = t0 + d / WALK; if (t < arr[s]) { arr[s] = t; ready[s] = t; prev[s] = { k: 'walk0', d }; w0[s] = d / WALK; } }
+    const on = new Int8Array(C.nt), bStop = new Int32Array(C.nt), bTime = new Int32Array(C.nt), bStart = new Float64Array(C.nt);
     let lo = 0, hi = C.n; while (lo < hi) { const m = (lo + hi) >> 1; if (C.dep[m] < t0) lo = m + 1; else hi = m; }
     const end = t0 + horizon;
     for (let i = lo; i < C.n; i++) {
       const dep = C.dep[i]; if (dep > end) break;
       const tr = C.trip[i];
-      if (!on[tr]) { if (ready[C.from[i]] <= dep) { on[tr] = 1; bStop[tr] = C.from[i]; bTime[tr] = dep; } else continue; }
+      if (!on[tr]) { const f = C.from[i]; if (ready[f] <= dep) { on[tr] = 1; bStop[tr] = f; bTime[tr] = dep; bStart[tr] = prev[f] && prev[f].k === 'walk0' ? dep - w0[f] : start[f]; } else continue; }
+      else { const f = C.from[i]; if (prev[f] && prev[f].k === 'walk0' && ready[f] <= dep && dep - w0[f] > bStart[tr]) { bStop[tr] = f; bTime[tr] = dep; bStart[tr] = dep - w0[f]; } }   // same bus, boarded at a nearer stop: leave home later
       const to = C.to[i], at = C.arr[i];
       if (at < arr[to]) {
-        arr[to] = at; ready[to] = at + 2; prev[to] = { k: 'ride', trip: tr, from: bStop[tr], dep: bTime[tr], at };
-        for (const [n, w] of G.foot[to]) { const t2 = at + w; if (t2 < arr[n]) { arr[n] = t2; ready[n] = t2 + 2; prev[n] = { k: 'xfer', from: to, w }; } }
+        arr[to] = at; ready[to] = at + 2; prev[to] = { k: 'ride', trip: tr, from: bStop[tr], dep: bTime[tr], at }; start[to] = bStart[tr];
+        for (const [n, w] of G.foot[to]) { const t2 = at + w; if (t2 < arr[n]) { arr[n] = t2; ready[n] = t2 + 2; prev[n] = { k: 'xfer', from: to, w }; start[n] = start[to]; } }
       }
     }
-    return { arr, prev, t0 };
+    return { arr, prev, start, t0 };
   }
 
   function transitRoute(a, b, day, t0) {
     const r = csa(a, day, t0);
     const direct = Math.hypot(a.x - b.x, a.y - b.y) / WALK;
     let best = direct, bs = -1, bd = 0;
-    for (const [s, d] of stopsNear(b.x, b.y, MAX_WALK)) { const t = r.arr[s] - t0 + d / WALK; if (t < best) { best = t; bs = s; bd = d; } }
+    for (const [s, d] of stopsNear(b.x, b.y, MAX_WALK)) { const t = r.arr[s] - r.start[s] + d / WALK; if (t < best) { best = t; bs = s; bd = d; } }
     if (bs < 0) return { t: best, legs: [{ k: 'walk', min: direct, from: null, to: null }], walkOnly: true };
     // reconstruct
     const legs = []; let s = bs; legs.push({ k: 'walk', min: bd / WALK, from: s, to: null });
@@ -1064,7 +1090,7 @@ const Engine = (function () {
     legs.reverse();
     const P = D.pt, tt = P.tt[day];
     for (const L of legs) if (L.k === 'ride') { const t = tt[L.trip]; const pat = P.pat[t[0]]; L.route = pat[0]; L.seq = pat[1]; }
-    return { t: best, legs, walkOnly: false, t0 };
+    return { t: best, legs, walkOnly: false, t0, leave: r.start[bs] };
   }
 
   // ---------- isochrone grid
@@ -1133,18 +1159,19 @@ const Engine = (function () {
   }
 
   function transitGrid(origin, day, t0) {
-    const gr = gridInit(), out = new Float32Array(gr.nx * gr.ny).fill(999), gs = gr.gs;
-    const r = csa(origin, day, t0, 150);
+    const gr = gridInit(), out = new Float32Array(gr.nx * gr.ny).fill(999), gs = gr.gs, foot = new Uint8Array(gr.nx * gr.ny);
+    const r = csa(origin, day, t0, 150); let walkPass = false;
     const splat = (x, y, base, rad) => {
       const i0 = Math.max(0, Math.floor((x - rad) / gs)), i1 = Math.min(gr.nx - 1, Math.floor((x + rad) / gs));
       const j0 = Math.max(0, Math.floor((y - rad) / gs)), j1 = Math.min(gr.ny - 1, Math.floor((y + rad) / gs));
       for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
         const cx = (i + .5) * gs, cy = (j + .5) * gs, d = Math.hypot(cx - x, cy - y); if (d > rad) continue;
-        const t = base + d / WALK, k = j * gr.nx + i; if (t < out[k] && !gr.wet[k] && (d < 250 || dryLine(x, y, cx, cy))) out[k] = t;
+        const t = base + d / WALK, k = j * gr.nx + i; if (t < out[k] && !gr.wet[k] && (d < 250 || dryLine(x, y, cx, cy))) { out[k] = t; foot[k] = walkPass ? 1 : 0; }
       }
     };
-    splat(origin.x, origin.y, 0, 2000);
-    for (let s = 0; s < G.ns; s++) if (isFinite(r.arr[s])) splat(G.sx[s], G.sy[s], r.arr[s] - t0, 1200);
+    walkPass = true; splat(origin.x, origin.y, 0, 2000); walkPass = false;
+    for (let s = 0; s < G.ns; s++) if (isFinite(r.arr[s]) && r.prev[s] && r.prev[s].k !== 'walk0') splat(G.sx[s], G.sy[s], r.arr[s] - r.start[s], 1200);
+    out.foot = foot;
     return out;
   }
 
@@ -1344,8 +1371,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
     add({ id: 'kgp', type: 'symbol', source: 'edu', minzoom: 12.6, filter: eduF('k', 'p'), layout: iconLayout(vis(S.lay.kgp)) });
     add({ id: 'edu', type: 'symbol', source: 'edu', minzoom: 12.2, filter: eduF('s', 'v'), layout: iconLayout(vis(S.lay.edu)) });
     add({ id: 'edup', type: 'symbol', source: 'edu', minzoom: 12.2, filter: eduF('s', 'p'), layout: iconLayout(vis(S.lay.edup)) });
-    add({ id: 'pinned', type: 'symbol', source: 'edu', filter: ['==', ['get', 'pin'], 1], layout: iconLayout() });
-    add({ id: 'mine', type: 'symbol', source: 'mine', layout: iconLayout() });
+    add({ id: 'pinned', type: 'symbol', source: 'edu', filter: ['==', ['get', 'pin'], 1], layout: iconLayout({ 'icon-anchor': 'bottom', 'icon-offset': [0, 1] }) });
+    add({ id: 'mine', type: 'symbol', source: 'mine', layout: iconLayout({ 'icon-anchor': 'bottom', 'icon-offset': [0, 1] }) });
     const LBL = [['loc', zOf(0.06), 24], ['v3', zOf(0.035), 24], ['v2', zOf(0.02), 24], ['suburb', zOf(0.02), 24], ['v1', zOf(0.012), 24], ['town', zOf(0.006), 24], ['city', 0, zOf(0.06)]];
     for (const [g, minz, maxz] of LBL) add({ id: 'lbl-' + g, type: 'symbol', source: 'places', minzoom: minz, maxzoom: maxz, filter: ['==', ['get', 'g'], g], layout: { 'icon-image': ['get', 'img'], 'icon-padding': 3, 'symbol-sort-key': ['get', 'k'] } });
     add({ id: 'probe', type: 'circle', source: 'probe' });
@@ -1397,7 +1424,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
     'ic-kg': () => iconCanvas((c) => { c.fillStyle = colors.kg; c.strokeStyle = colors.halo; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, 7.5, 0, 7); c.fill(); c.stroke(); c.fillStyle = colors.panel; c.beginPath(); c.arc(0, -1.5, 2.2, 0, 7); c.fill(); c.beginPath(); c.moveTo(-3.6, 4.2); c.quadraticCurveTo(0, -1, 3.6, 4.2); c.closePath(); c.fill(); }),
     'ic-school-p': () => iconCanvas((c) => { badge(c, colors.panel); c.strokeStyle = colors.edu; c.lineWidth = 2; c.beginPath(); if (c.roundRect) c.roundRect(-8, -8, 16, 16, 4.5); else c.rect(-8, -8, 16, 16); c.stroke(); cap(c, colors.edu); }),
     'ic-kg-p': () => iconCanvas((c) => { c.fillStyle = colors.panel; c.strokeStyle = colors.kg; c.lineWidth = 2.2; c.beginPath(); c.arc(0, 0, 7.3, 0, 7); c.fill(); c.stroke(); c.fillStyle = colors.kg; c.beginPath(); c.arc(0, -1.5, 2.2, 0, 7); c.fill(); c.beginPath(); c.moveTo(-3.6, 4.2); c.quadraticCurveTo(0, -1, 3.6, 4.2); c.closePath(); c.fill(); }),
-    'ic-pin': () => iconCanvas((c) => { c.scale(1.15, 1.15); badge(c, colors.pin); cap(c, colors.panel); }),
+    // "my objects": a plain map pin, so it never looks like a school
+    'ic-pin': () => iconCanvas((c) => { c.fillStyle = colors.pin; c.strokeStyle = colors.halo; c.lineWidth = 1.8; c.beginPath(); c.arc(0, -3.2, 6.6, 0.75 * Math.PI, 2.25 * Math.PI); c.lineTo(0, 10); c.closePath(); c.fill(); c.stroke(); c.fillStyle = colors.halo; c.beginPath(); c.arc(0, -3.2, 2.5, 0, 7); c.fill(); }),
   };
   function addIcons() { for (const [id, fn] of Object.entries(ICONS)) { const im = fn(); if (!map.hasImage(id)) map.addImage(id, im.data, { pixelRatio: im.pr }); } }
 
@@ -1453,7 +1481,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
   function computeIso() {
     const pal = ['i5', 'i10', 'i15', 'i20', 'i25', 'i30'].map((k) => colors[k]);
     req('iso', { type: 'iso', o: pt2(isoOrigin()), day: S.day, t: S.t, mode: S.iso.mode, pal, k: isPhone() ? 3 : 4 }, (d) => {
-      S.isoCar = d.car; S.isoPt = d.pt; S.isoFC = d.fc; S.isoMode = d.mode;
+      S.isoCar = d.car; S.isoPt = d.pt; S.isoPtW = d.ptw; S.isoFC = d.fc; S.isoMode = d.mode;
       map.getSource('iso').setData(d.fc); if (d.img) showIsoImg(d.img);
       renderProbe(); refreshCardTimes(); updatePinnedTimes(); renderSx();
     });
@@ -1795,6 +1823,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
       list = (store.get('kaunas-obj-pin', []) || []).map((n) => D.edu.find((e) => e[1] === n)).filter(Boolean).map((e) => ({ name: e[1], kind: e[0], lon: e[2] * 1e-5, lat: e[3] * 1e-5 }));
     }
     pinned = list.filter((o) => o && isFinite(o.lon) && isFinite(o.lat)).map((o) => Object.assign(E.toWorld(o.lon, o.lat), { name: String(o.name || 'Vieta'), kind: o.kind || 'c', lon: o.lon, lat: o.lat }));
+    // a school or kindergarten whose name changed in the data (e.g. got its street added) keeps its pin
+    for (const p of pinned) if (p.kind !== 'c' && !D.edu.some((e) => e[1] === p.name)) { const e = D.edu.find((q) => q[0] === p.kind && Math.hypot(E.toWorld(q[2] * 1e-5, q[3] * 1e-5).x - p.x, E.toWorld(q[2] * 1e-5, q[3] * 1e-5).y - p.y) < 40); if (e) p.name = e[1]; }
   }
   function mineGeo() { return FC(pinned.filter((p) => p.kind === 'c').map((p, i) => ({ type: 'Feature', properties: { i: pinned.indexOf(p), img: 'ic-pin' }, geometry: { type: 'Point', coordinates: [p.lon, p.lat] } }))); }
   function savePinned() {
@@ -1812,7 +1842,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
   function renderPinned() {
     const box = $('#mine'); if (!box) return;
     $('#mineempty').hidden = pinned.length > 0;
-    const tm = (p) => { const r = timesAt(p.x, p.y); if (!r) return ''; return `${originLabel()}: auto ${r.car ? Math.round(r.car.t) + ' min' : '-'}, VT ${r.pt ? Math.round(r.pt.t) + ' min' : '-'}`; };
+    const tm = (p) => { const r = timesAt(p.x, p.y); if (!r) return ''; return `${originLabel()}: auto ${r.car ? Math.round(r.car.t) + ' min' : '-'}, ${r.pt && r.pt.walk ? 'pėsčiomis' : 'VT'} ${r.pt ? Math.round(r.pt.t) + ' min' : '-'}`; };
     box.innerHTML = pinned.map((p, i) => `<li><span class="dot ${p.kind}"></span><div style="min-width:0"><input value="${esc(p.name)}" data-mn="${i}" aria-label="Pavadinimas" title="${esc(p.name)}"><div class="t">${esc(KIND_TXT[p.kind] || '')}${tm(p) ? ' · ' + tm(p) : ''}</div></div><div class="acts"><button data-mv="${i}" title="Rodyti žemėlapyje">Rodyti</button><button data-mb="${i}" title="Padaryti tašku B">B</button><button data-mo="${i}" title="Skaičiuoti zonas nuo čia">Centras</button><button class="x" data-mr="${i}" aria-label="Pašalinti ${esc(p.name)}">×</button></div></li>`).join('');
     box.querySelectorAll('[data-mn]').forEach((inp) => inp.addEventListener('change', () => { const p = pinned[+inp.dataset.mn]; const v = inp.value.trim(); if (v) { p.name = v; savePinned(); } else inp.value = p.name; }));
     box.querySelectorAll('[data-mv]').forEach((b) => b.onclick = () => { const p = pinned[+b.dataset.mv]; flyToW(p, 14); if (isPhone()) document.body.classList.add('panel-off'); });
@@ -1824,7 +1854,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
 
   function updatePinnedTimes() {
     const box = $('#mine'); if (!box) return;
-    box.querySelectorAll('li').forEach((li, i) => { const p = pinned[i]; if (!p) return; const r = timesAt(p.x, p.y), el = li.querySelector('.t'); if (!el) return; const s = (KIND_TXT[p.kind] || '') + (r ? ` · ${originLabel()}: auto ${r.car ? Math.round(r.car.t) + ' min' : '-'}, VT ${r.pt ? Math.round(r.pt.t) + ' min' : '-'}` : ''); if (el.textContent !== s) el.textContent = s; });
+    box.querySelectorAll('li').forEach((li, i) => { const p = pinned[i]; if (!p) return; const r = timesAt(p.x, p.y), el = li.querySelector('.t'); if (!el) return; const s = (KIND_TXT[p.kind] || '') + (r ? ` · ${originLabel()}: auto ${r.car ? Math.round(r.car.t) + ' min' : '-'}, ${r.pt && r.pt.walk ? 'pėsčiomis' : 'VT'} ${r.pt ? Math.round(r.pt.t) + ' min' : '-'}` : ''); if (el.textContent !== s) el.textContent = s; });
   }
   // short status shown on collapsed section headers
   function renderSx() {
@@ -1855,7 +1885,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     const i = Math.floor(x / GRID.gs), j = Math.floor(y / GRID.gs);
     if (i < 0 || j < 0 || i >= GRID.nx || j >= GRID.ny) return null;
     const k = j * GRID.nx + i, c = S.isoCar[k], p = S.isoPt[k]; const cong = E.congestion(S.day, S.t);
-    return { car: c >= 900 ? null : { t: c, pm: Math.max(1, Math.round(c * (0.08 + 0.18 * cong))) }, pt: p >= 900 ? null : { t: p, pm: Math.max(2, Math.round(p * 0.12)) } };
+    return { car: c >= 900 ? null : { t: c, pm: Math.max(1, Math.round(c * (0.08 + 0.18 * cong))) }, pt: p >= 900 ? null : { t: p, pm: Math.max(2, Math.round(p * 0.12)), walk: !!(S.isoPtW && S.isoPtW[k]) } };
   }
   function originLabel() {
     if (S.iso.origin === 'A' && S.A && S.route) return 'nuo A';
@@ -1863,7 +1893,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     return S.O.custom ? 'nuo tavo centro' : 'nuo Kauno centro';
   }
   const tline = (lbl, cls, v, pm) => `<div class="tl"><i class="${cls}"></i><span class="tn">${lbl}</span><b>${v != null ? '≈ ' + Math.round(v) + ' min' : '-'}</b><span class="pm">${v != null && pm ? '±' + pm : ''}</span></div>`;
-  function tipHTML(r) { return `<div class="th">${originLabel()}, ${fmtT(S.t)}</div>` + tline('Automobiliu', 'c', r.car && r.car.t, r.car && r.car.pm) + tline('Viešuoju tr.', 'p', r.pt && r.pt.t, r.pt && r.pt.pm); }
+  function tipHTML(r) { return `<div class="th">${originLabel()}, ${fmtT(S.t)}</div>` + tline('Automobiliu', 'c', r.car && r.car.t, r.car && r.car.pm) + tline(r.pt && r.pt.walk ? 'Pėsčiomis' : 'Viešuoju tr.', 'p', r.pt && r.pt.t, r.pt && r.pt.pm); }
   const HIT = ['lst', 'mine', 'pinned', 'edu', 'kg', 'edup', 'kgp', 'edu-dot', 'kg-dot', 'edup-dot', 'kgp-dot'];
   function hitAt(point) {
     const layers = HIT.filter((id) => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
@@ -1894,13 +1924,14 @@ if (typeof module !== 'undefined') module.exports = Engine;
     const w = toW(ev.lngLat.lng, ev.lngLat.lat);
     if (S.pick === 'I') {
       const hit = hitAt(ev.point);
-      if (hit) { openCard(hit.type, hit.item, [ev.lngLat.lng, ev.lngLat.lat]); return; }
+      if (hit) { if (S.card && S.card.type === hit.type && sameItem(S.card.item, hit.item)) { closeCard(); return; } openCard(hit.type, hit.item, [ev.lngLat.lng, ev.lngLat.lat]); return; }
       if (S.card) { closeCard(); return; }   // with a card open, a click on empty map only closes it
       S.probe = { x: w.x, y: w.y, name: nameFor(w.x, w.y) }; map.getSource('probe').setData({ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [ev.lngLat.lng, ev.lngLat.lat] } });
       openCard('probe', S.probe, [ev.lngLat.lng, ev.lngLat.lat]); return;
     }
     setPoint(S.pick, w.x, w.y); if (S.pick === 'A' && !S.B) setPick('B'); else setPick('I');
   }
+  const sameItem = (a, b) => a === b || (a && b && a.name === b.name && a.x != null && Math.hypot(a.x - b.x, a.y - b.y) < 5);
   let cardLL = null;
   function openCard(type, item, ll) {
     S.card = { type, item };
@@ -1970,6 +2001,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
       const facts = [l.m2 ? `${Math.round(l.m2)} m²` : null, l.lot != null ? `${String(l.lot).replace('.', ',')} a sklypas` : null, l.rooms ? `${l.rooms} kamb.` : null, l.year ? `${l.year} m.` : null, l.extra || null].filter(Boolean).map(esc).join(' · ');
       const srcName = l.src === 'aruodas' ? 'aruodas.lt' : l.src === 'skelbiu' ? 'skelbiu.lt' : '';
       h = `${galHTML(l.ph)}<div class="ch"><b>${esc(l.addr)}</b>${close}</div>${l.title ? `<div class="ttl">${esc(l.title)}</div>` : ''}
+        ${(() => { const r = l.x != null ? timesAt(l.x, l.y) : null; return r ? tipHTML(r) : ''; })()}
         <div class="price">${l.price ? fmtEur(l.price) : 'Kaina nenurodyta'} ${l.price && l.m2 ? `<span>${Math.round(l.price / l.m2).toLocaleString('lt-LT')} €/m²</span>` : ''}</div>${facts ? `<div class="facts">${facts}</div>` : ''}
         ${l.gq === 1 ? '<div class="th">Vieta apytikslė: pagal gyvenvietę, ne gatvę</div>' : ''}
         ${pinned.length ? `<div class="th">Iki mano objektų, ${DAYS[S.day].toLowerCase()}, ${fmtT(S.t)}</div><div id="cardtimes"><div class="th">Skaičiuojama…</div></div>` : '<div class="th">Pridėk darželių, mokyklų ar darbo vietą į „Mano objektus“, kad matytum kelionės laikus iki jų.</div>'}
@@ -1999,7 +2031,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     req('card', { type: 'batch', jobs: list.map((sc) => ({ a: { x: it.x, y: it.y }, b: { x: sc.x, y: sc.y }, day: S.day, t: S.t })) }, (res) => {
       if (my !== cardSeq || S.card !== c) return; const el = $('#cardtimes'); if (!el) return;
       const cong = E.congestion(S.day, S.t), pmc = (v) => v == null ? 0 : Math.max(1, Math.round(v * (0.08 + 0.18 * cong))), pmp = (v) => v == null ? 0 : Math.max(2, Math.round(v * 0.12));
-      requestAnimationFrame(placeCard); el.innerHTML = list.map((sc, i) => `<div class="sch">${esc(shortName(sc.name))}</div>` + tline('auto', 'c', res[i].car, pmc(res[i].car)) + tline('viešuoju tr.', 'p', res[i].pt, pmp(res[i].pt))).join('');
+      requestAnimationFrame(placeCard); el.innerHTML = list.map((sc, i) => `<div class="sch">${esc(shortName(sc.name))}</div>` + tline('auto', 'c', res[i].car, pmc(res[i].car)) + tline(res[i].ptw ? 'pėsčiomis' : 'viešuoju tr.', 'p', res[i].pt, pmp(res[i].pt))).join('');
     });
   }
   function renderProbe() { if (S.card && S.card.type === 'probe') renderCard(), refreshCardTimes(); }
@@ -2013,7 +2045,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     computeRoute();
   }
   function setPointUI(k) { if (k === 'O') { renderOrigin(); return; } $('#in' + k).value = S[k] ? S[k].name : ''; $('#clr' + k).hidden = !S[k]; }
-  function setPick(k) { if ((k === 'A' || k === 'B') && !S.route) k = 'I'; S.pick = k; document.querySelectorAll('[data-pick]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.pick === k)); if (map) map.getCanvas().style.cursor = k === 'I' ? '' : 'crosshair'; }
+  function setPick(k) { if ((k === 'A' || k === 'B') && !S.route) { if (mapReady) setRoute(true); else k = 'I'; } S.pick = k; document.querySelectorAll('[data-pick]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.pick === k)); if (map) map.getCanvas().style.cursor = k === 'I' ? '' : 'crosshair'; }
   function clearPoint(k) { S[k] = null; setPointUI(k); syncMarkers(); if (S.iso.origin === k) computeIso(); computeRoute(); }
   function renderOrigin() { $('#oname').textContent = S.O.custom ? S.O.name : 'Kauno centras (Laisvės al.)'; $('#oreset').hidden = !S.O.custom; }
   function defaultOrigin() { const c = E.toWorld(E.CENTER.lon, E.CENTER.lat); return { x: c.x, y: c.y, name: 'Kauno centras (Laisvės al.)', custom: false }; }
@@ -2058,8 +2090,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
     pt.querySelector('.big').textContent = fmtMin(S.pt.t);
     if (S.pt.walkOnly) { pt.querySelector('.sub').textContent = S.pt.t < 40 ? 'Greičiau pėsčiomis' : 'Nėra tinkamo reiso šiuo metu'; return; }
     const rides = S.pt.legs.filter((l) => l.k === 'ride'); const first = rides[0];
-    const wait = first ? first.dep - (S.t + (S.pt.legs[0].k === 'walk' ? S.pt.legs[0].min : 0)) : 0;
-    pt.querySelector('.sub').textContent = `atvyksi ${fmtT(S.t + S.pt.t)} · ${rides.length > 1 ? (rides.length - 1) + ' persėd.' : 'be persėdimų'}` + (wait > 15 ? ` · laukimas ${Math.round(wait)} min` : '');
+    const leave = S.pt.leave != null ? S.pt.leave : S.t, later = leave - S.t;
+    pt.querySelector('.sub').textContent = (later >= 3 ? `išeik ${fmtT(leave)} · ` : '') + `atvyksi ${fmtT(leave + S.pt.t)} · ${rides.length > 1 ? (rides.length - 1) + ' persėd.' : 'be persėdimų'}`;
     let h = '';
     for (const L of S.pt.legs) {
       if (L.k === 'walk') { if (L.min < 0.8) continue; h += `<li class="walk"><span class="lg">Pėsčiomis</span><span>${Math.round(L.min)} min${L.to != null ? ' iki „' + esc(D.pt.stops[L.to][2]) + '“' : ''}</span></li>`; }
@@ -2188,6 +2220,13 @@ if (typeof module !== 'undefined') module.exports = Engine;
     document.querySelectorAll('[data-day]').forEach((b) => b.onclick = () => { S.day = b.dataset.day; recomputeAll(); });
     document.querySelectorAll('[data-t]').forEach((b) => b.onclick = () => { S.t = +b.dataset.t; recomputeAll(); });
     const sl = $('#tslider');
+    const fi = $('#find');
+    const findGo = () => { const it = searchIdx.get(fi.value); if (!it) return; const ll = toLL(it); flyToW(it, 14.5);
+      const e = D.edu.find((q) => q[1] === it.name && Math.hypot(E.toWorld(q[2] * 1e-5, q[3] * 1e-5).x - it.x, E.toWorld(q[2] * 1e-5, q[3] * 1e-5).y - it.y) < 5);
+      if (e) openCard('edu', Object.assign(E.toWorld(e[2] * 1e-5, e[3] * 1e-5), { kind: e[0], name: e[1], own: e[4] || 'v' }), ll);
+      else { S.probe = { x: it.x, y: it.y, name: it.name }; map.getSource('probe').setData({ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: ll } }); openCard('probe', S.probe, ll); }
+      fi.blur(); if (isPhone()) document.body.classList.add('panel-off'); };
+    fi.addEventListener('change', findGo); fi.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') findGo(); });
     sl.addEventListener('input', () => { S.t = +sl.value; renderTimeUI(); computeIso(); computeRoute(); });
     sl.addEventListener('change', refreshCardTimes);
     document.querySelectorAll('[data-pick]').forEach((b) => b.onclick = () => setPick(b.dataset.pick));
@@ -2212,7 +2251,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     const re = () => { const c = readColors(), sig = JSON.stringify(c); if (sig === lastSig) return; lastSig = sig; applyTheme(); };
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', re);
     new MutationObserver(re).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && S.card) closeCard(); });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && S.card && !document.getElementById('lightbox')) closeCard(); });
     $('#zin').onclick = () => map.zoomIn({ duration: 250 }); $('#zout').onclick = () => map.zoomOut({ duration: 250 });
     $('#zfit').onclick = fitDistrict; $('#zcity').onclick = () => fitCity();
   }
@@ -2250,6 +2289,8 @@ if (typeof module !== 'undefined') module.exports = Engine;
   if (isPhone()) document.body.classList.add('panel-off');
   document.getElementById('panelbtn').onclick = () => { document.body.classList.remove('panel-off'); document.getElementById('panel').scrollTop = 0; };
   document.getElementById('panelhide').onclick = () => document.body.classList.add('panel-off');
+  document.getElementById('pclose').onclick = () => document.body.classList.add('panel-off');
+  document.getElementById('panel').addEventListener('transitionend', (e) => { if (e.propertyName === 'transform') window.dispatchEvent(new Event('resize')); });
   async function start() {
     if (!ML || !(function () { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) { return false; } })()) { $('#loading').textContent = 'Šiai naršyklei reikia WebGL. Atidaryk puslapį naujesnėje naršyklėje.'; return; }
     colors = readColors();
@@ -2286,7 +2327,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     map.on('movestart', () => { dragging = true; hideTip(); }); map.on('moveend', () => { dragging = false; });
     map.on('click', onClick);
     map.on('move', () => { if (S.card) placeCard(); });
-    const syncPad = () => { if (!map) return; const R = map.getContainer().getBoundingClientRect(), pr = $('#panel').getBoundingClientRect(); map.setPadding({ left: isPhone() ? 0 : Math.max(0, pr.right - R.left), top: 0, right: 0, bottom: 0 }); if (S.card) placeCard(); };
+    const syncPad = () => { if (!map) return; const R = map.getContainer().getBoundingClientRect(), pr = $('#panel').getBoundingClientRect(); map.setPadding({ left: isPhone() || document.body.classList.contains('panel-off') ? 0 : Math.max(0, pr.right - R.left), top: 0, right: 0, bottom: 0 }); if (S.card) placeCard(); };
     syncPad(); window.addEventListener('resize', syncPad);
     map.once('load', () => {
       addIcons(); fitCity(true); mapReady = true;
