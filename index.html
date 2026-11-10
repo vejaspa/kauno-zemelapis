@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>body{margin:0;padding:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px)}</style>
 <script src="config.js"></script>
-<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=ab73ba8a';
+<script>window.KAUNAS_DATA_URL = 'kaunas.json?v=2dc60676';
 if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </head>
 <body>
@@ -579,6 +579,27 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
     }
     return v;
   }
+  // Zone fill as a picture in Web Mercator rows (so it lines up with the map exactly), sampled bilinearly from the grid.
+  // Polygons with many holes sometimes triangulate wrongly inside map tiles (dark rectangles); a picture cannot.
+  function isoRaster(g, pal, k) {
+    const nx = grid.nx, ny = grid.ny, gs = grid.gs, W = nx * k, H = ny * k, out = new Uint8ClampedArray(W * H * 4);
+    const tl = Engine.toLonLat(0, 0), br = Engine.toLonLat(nx * gs, ny * gs);
+    const merc = (lat) => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)), y0 = merc(tl.lat), y1 = merc(br.lat);
+    const col = pal.map((h) => { const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(String(h).trim()); return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [128, 128, 128]; });
+    const at = (i, j) => g[Math.min(ny - 1, Math.max(0, j)) * nx + Math.min(nx - 1, Math.max(0, i))];
+    for (let py = 0; py < H; py++) {
+      const lat = (2 * Math.atan(Math.exp(y0 + (py + 0.5) / H * (y1 - y0))) - Math.PI / 2) * 180 / Math.PI;
+      const fy = Engine.toWorld(tl.lon, lat).y / gs - 0.5, j = Math.floor(fy), ty = fy - j;
+      for (let px = 0; px < W; px++) {
+        const fx = (px + 0.5) / k - 0.5, i = Math.floor(fx), tx = fx - i;
+        const v = (at(i, j) * (1 - tx) + at(i + 1, j) * tx) * (1 - ty) + (at(i, j + 1) * (1 - tx) + at(i + 1, j + 1) * tx) * ty;
+        if (!(v <= 30)) continue;
+        const b = v <= 5 ? 0 : v <= 10 ? 1 : v <= 15 ? 2 : v <= 20 ? 3 : v <= 25 ? 4 : 5, c = col[b], o = (py * W + px) * 4;
+        out[o] = c[0]; out[o + 1] = c[1]; out[o + 2] = c[2]; out[o + 3] = 255;
+      }
+    }
+    return { w: W, h: H, px: out, ll: [[tl.lon, tl.lat], [br.lon, tl.lat], [br.lon, br.lat], [tl.lon, br.lat]] };
+  }
   function carGeo(r) {
     if (!r || !r.edges || !r.edges.length) return null;
     return { type: 'MultiLineString', coordinates: r.edges.map((ed) => { const [xs, ys] = Engine.edgePts(ed); return xs.map((x, k) => ll(x, ys[k])); }) };
@@ -608,7 +629,8 @@ details.mini > div { display: flex; flex-direction: column; gap: 8px; margin-top
         // cap what is still unreachable so the contour lines of different levels never pile up on one cell edge
         for (let i = 0; i < g.length; i++) vals[i] = -Math.min(g[i], 34);
         const fc = isoBands(vals, grid.nx, grid.ny, grid.gs);
-        self.postMessage({ type: 'res', id: m.id, data: { car, pt, fc, mode: m.mode } }, [car.buffer, pt.buffer]);
+        const img = m.pal ? isoRaster(g, m.pal, m.k || 3) : null;
+        self.postMessage({ type: 'res', id: m.id, data: { car, pt, fc, img, mode: m.mode } }, [car.buffer, pt.buffer].concat(img ? [img.px.buffer] : []));
       } else if (m.type === 'route') {
         const car = Engine.carRoute(m.A, m.B, m.day, m.t), pt = Engine.transitRoute(m.A, m.B, m.day, m.t), free = Engine.carRoute(m.A, m.B, m.day, 180);
         Engine.setRisk(1); const bad = Engine.carRoute(m.A, m.B, m.day, m.t); Engine.setRisk(0);
@@ -1255,6 +1277,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
       'forest-pat': { 'fill-pattern': 'pat-forest' }, 'park-pat': { 'fill-pattern': 'pat-park' },
       'forest-edge': { 'line-color': c['forest-ink'], 'line-width': W(12, 0.4, 1.2) }, 'park-edge': { 'line-color': c['park-ink'], 'line-width': W(12, 0.6, 1.6) },
       water: { 'fill-color': c.water }, rivers: { 'line-color': c.water, 'line-width': W(25, 1, 6) },
+      'iso-img': { 'raster-opacity': parseFloat(c['iso-alpha']) || 0.4, 'raster-fade-duration': 0, 'raster-resampling': 'linear' },
       'iso-fill': { 'fill-color': ['match', ['get', 'b'], 0, c.i5, 1, c.i10, 2, c.i15, 3, c.i20, 4, c.i25, c.i30], 'fill-opacity': parseFloat(c['iso-alpha']) || 0.42 },
       'iso-line': { 'line-color': ['match', ['get', 'b'], 0, c.i5, 1, c.i10, 2, c.i15, 3, c.i20, 4, c.i25, c.i30], 'line-width': 1, 'line-opacity': 0.9 },
       bounds: { 'line-color': c.bound, 'line-width': 1.2, 'line-dasharray': [5, 4] },
@@ -1278,14 +1301,15 @@ if (typeof module !== 'undefined') module.exports = Engine;
     const P = paints(colors), src = {}, L = [];
     const gj = (id, data, extra) => { src[id] = Object.assign({ type: 'geojson', data, maxzoom: 14, tolerance: 0.45, buffer: 64 }, extra || {}); };
     for (const k of ['roads', 'water', 'rivers', 'rail', 'bounds', 'ptlines', 'stops', 'forest', 'park', 'cycle', 'track', 'places']) gj(k, G0[k]);
-    gj('iso', EMPTY, { maxzoom: 13, tolerance: 0.3 }); gj('car', EMPTY); gj('ptride', EMPTY); gj('ptwalk', EMPTY); gj('probe', EMPTY);
+    gj('iso', EMPTY, { maxzoom: 15, tolerance: 0.1 }); gj('car', EMPTY); gj('ptride', EMPTY); gj('ptwalk', EMPTY); gj('probe', EMPTY);
     gj('lst', EMPTY, { maxzoom: 16 }); gj('lstsel', EMPTY); gj('mine', mineGeo()); gj('edu', eduGeo(), { maxzoom: 16 });
     const vis = (on) => ({ visibility: on ? 'visible' : 'none' });
     const add = (o) => { if (P[o.id]) o.paint = Object.assign({}, P[o.id], o.paint || {}); L.push(o); };
     add({ id: 'bg', type: 'background' });
     add({ id: 'forest', type: 'fill', source: 'forest', layout: vis(S.lay.forest) });
     add({ id: 'park', type: 'fill', source: 'park', layout: vis(S.lay.forest) });
-    add({ id: 'iso-fill', type: 'fill', source: 'iso', layout: vis(S.iso.on) });
+    src.isoimg = { type: 'image', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', coordinates: [[23.4, 55.1], [24.4, 55.1], [24.4, 54.6], [23.4, 54.6]] };
+    add({ id: 'iso-img', type: 'raster', source: 'isoimg', layout: vis(S.iso.on) });
     add({ id: 'iso-line', type: 'line', source: 'iso', layout: vis(S.iso.on) });
     // parks and forests are marked over the time zones by a hatch and an outline, so their green never reads as a zone colour
     add({ id: 'forest-pat', type: 'fill', source: 'forest', layout: vis(S.lay.forest) });
@@ -1334,6 +1358,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     for (const id of labelImgs) { const im = labelImage(id); if (im) map.updateImage(id, im.data); }
     for (const [id, fn] of Object.entries(ICONS)) if (map.hasImage(id)) map.updateImage(id, fn().data);
     for (const k of ['A', 'B', 'O']) if (MK[k]) styleMarker(k);
+    if (mainReady && WK.ready) computeIso();   // the zone picture carries its colours
   }
 
   // ---------- label and icon images (no font server needed)
@@ -1426,11 +1451,19 @@ if (typeof module !== 'undefined') module.exports = Engine;
     return S.O;
   }
   function computeIso() {
-    req('iso', { type: 'iso', o: pt2(isoOrigin()), day: S.day, t: S.t, mode: S.iso.mode }, (d) => {
+    const pal = ['i5', 'i10', 'i15', 'i20', 'i25', 'i30'].map((k) => colors[k]);
+    req('iso', { type: 'iso', o: pt2(isoOrigin()), day: S.day, t: S.t, mode: S.iso.mode, pal, k: isPhone() ? 3 : 4 }, (d) => {
       S.isoCar = d.car; S.isoPt = d.pt; S.isoFC = d.fc; S.isoMode = d.mode;
-      map.getSource('iso').setData(d.fc);
+      map.getSource('iso').setData(d.fc); if (d.img) showIsoImg(d.img);
       renderProbe(); refreshCardTimes(); updatePinnedTimes(); renderSx();
     });
+  }
+  let isoURL = null, isoSeq = 0;
+  function showIsoImg(im) {
+    const my = ++isoSeq, cv = document.createElement('canvas'); cv.width = im.w; cv.height = im.h;
+    cv.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(im.px.buffer || im.px), im.w, im.h), 0, 0);
+    const put = (url) => { if (my !== isoSeq) { URL.revokeObjectURL(url); return; } const src = map.getSource('isoimg'); if (!src) return; const old = isoURL; isoURL = url; src.updateImage({ url, coordinates: im.ll }); if (old) setTimeout(() => URL.revokeObjectURL(old), 4000); };
+    if (cv.toBlob) cv.toBlob((b) => b && put(URL.createObjectURL(b)), 'image/png'); else put(cv.toDataURL('image/png'));
   }
   function recomputeAll() { computeRoute(); computeIso(); renderTimeUI(); refreshCardTimes(); }
 
@@ -1730,7 +1763,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     { key: 'forest', label: 'Miškai ir parkai', sw: '<span class="sw" style="background:repeating-linear-gradient(135deg,var(--park-ink) 0 1px,transparent 1px 4px);box-shadow:inset 0 0 0 1px var(--park-ink)"></span>', ids: ['forest', 'park', 'forest-pat', 'park-pat', 'forest-edge', 'park-edge'] },
     { key: 'track', label: 'Miško ir lauko keliukai', note: 'matosi priartinus', sw: '<span class="sw dash"></span>', ids: ['track'] },
     { key: 'pt', label: 'Autobusų ir troleibusų linijos, stotelės', sw: '<span class="sw line" style="background:var(--bus)"></span>', ids: ['bus', 'trol', 'stops'] },
-    { key: 'iso', label: 'Kelionės laiko zonos', sw: '<span class="sw" style="background:linear-gradient(90deg,var(--i5),var(--i20),var(--i30))"></span>', ids: ['iso-fill', 'iso-line'] },
+    { key: 'iso', label: 'Kelionės laiko zonos', sw: '<span class="sw" style="background:linear-gradient(90deg,var(--i5),var(--i20),var(--i30))"></span>', ids: ['iso-img', 'iso-line'] },
     { key: 'lst', label: 'Įkelti skelbimai', sw: '<span class="sw dot" style="background:var(--lst)"></span>', ids: ['lst', 'lst-sel'] },
     { key: 'bounds', label: 'Miesto ir rajono ribos', sw: '<span class="sw line" style="background:var(--bound)"></span>', ids: ['bounds'] },
   ];
@@ -1862,6 +1895,7 @@ if (typeof module !== 'undefined') module.exports = Engine;
     if (S.pick === 'I') {
       const hit = hitAt(ev.point);
       if (hit) { openCard(hit.type, hit.item, [ev.lngLat.lng, ev.lngLat.lat]); return; }
+      if (S.card) { closeCard(); return; }   // with a card open, a click on empty map only closes it
       S.probe = { x: w.x, y: w.y, name: nameFor(w.x, w.y) }; map.getSource('probe').setData({ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [ev.lngLat.lng, ev.lngLat.lat] } });
       openCard('probe', S.probe, [ev.lngLat.lng, ev.lngLat.lat]); return;
     }
